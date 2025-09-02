@@ -1,0 +1,1 @@
+pnpm add -D eslint-plugin-react-x eslint-plugin-react-dom prettier eslint-config-prettier
