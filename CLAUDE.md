@@ -4,6 +4,8 @@ This file provides guidance to AI agents when working with code in this reposito
 
 ## Critical Guidelines
 
+0. **Read README.md first** - Always start by reading the README.md file when beginning work on the repository to understand the project context and setup.
+
 1. **Always communicate in English** - Regardless of the language the user speaks, always respond in English. All code, comments, and documentation must be in English.
 
 2. **Minimal documentation** - Only add comments/documentation when it simplifies understanding and isn't obvious from the code itself. Keep it strictly relevant and concise.
