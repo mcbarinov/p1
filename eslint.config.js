@@ -39,7 +39,7 @@ export default defineConfig([
       "react-refresh/only-export-components": "off",
       "react-x/no-context-provider": "off",
       "react-x/no-use-context": "off",
-      "react-x/no-unstable-context-value": "off",
+      "react-x/no-unstable-context-value": "off"
     },
   },
 ])
