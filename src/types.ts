@@ -35,3 +35,13 @@ export interface User {
   username: string
   role: Role
 }
+
+export interface LoginRequest {
+  username: string
+  password: string
+}
+
+export interface LoginRespose {
+  authToken: string
+  user: User
+}
