@@ -3,5 +3,6 @@ pnpm add tailwindcss @tailwindcss/vite # Not as dev deps!!!
 echo '@import "tailwindcss";' > src/index.css
 pnpm dlx shadcn@latest init
 pnpm dlx shadcn@latest add dropdown-menu card table button textarea input sonner
-pnpm add react-router
-
+pnpm add react-router ky
+pnpm add -D msw
+pnpm dlx msw init public --save
