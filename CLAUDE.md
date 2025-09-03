@@ -11,3 +11,5 @@ This file provides guidance to AI agents when working with code in this reposito
 2. **Minimal documentation** - Only add comments/documentation when it simplifies understanding and isn't obvious from the code itself. Keep it strictly relevant and concise.
 
 3. **Critical thinking** - Always critically evaluate user ideas. Users can make mistakes. Think first about whether the user's idea is good before implementing.
+
+4. **Package manager** - Always use pnpm for all package management operations. Never use npm, yarn, or other package managers.
