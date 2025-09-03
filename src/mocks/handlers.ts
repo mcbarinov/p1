@@ -34,7 +34,7 @@ export const handlers = [
   }),
 
   // Get all forums
-  http.get("/api/forums", ({ request }) => {
+  http.get("/api/forums", () => {
     // const validationError = validateSession(request)
     // if (validationError) return validationError
 
