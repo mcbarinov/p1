@@ -1,4 +1,4 @@
-import type { LoginRequest, LoginRespose } from "@/types"
+import type { LoginRequest, LoginResponse } from "@/types"
 import { http, HttpResponse } from "msw"
 import { mockForums, mockSessions, mockUsers } from "./data"
 
@@ -11,7 +11,7 @@ export const handlers = [
     const user = mockUsers.find((u) => u.username === credentials.username && u.password === credentials.password)
 
     if (!user) {
-      return HttpResponse.json({ error: "Invalid username or password" }, { status: 401 })
+      return HttpResponse.json({ error: "Invalid username or password", user: null, authToken: null })
     }
 
     // Generate session
@@ -25,9 +25,10 @@ export const handlers = [
     // Store session
     mockSessions.set(sessionId, userWithoutPassword)
 
-    const response: LoginRespose = {
+    const response: LoginResponse = {
       user: userWithoutPassword,
       authToken: sessionId,
+      error: null,
     }
 
     return HttpResponse.json(response)

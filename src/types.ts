@@ -41,7 +41,8 @@ export interface LoginRequest {
   password: string
 }
 
-export interface LoginRespose {
-  authToken: string
-  user: User
+export interface LoginResponse {
+  authToken: string | null
+  user: User | null
+  error: string | null
 }
