@@ -11,7 +11,7 @@ export const handlers = [
     const user = mockUsers.find((u) => u.username === credentials.username && u.password === credentials.password)
 
     if (!user) {
-      return HttpResponse.json({ error: "Invalid username or password", user: null, authToken: null })
+      return HttpResponse.json({ error: "Invalid username or password" }, { status: 401 })
     }
 
     // Generate session
@@ -28,7 +28,6 @@ export const handlers = [
     const response: LoginResponse = {
       user: userWithoutPassword,
       authToken: sessionId,
-      error: null,
     }
 
     return HttpResponse.json(response)

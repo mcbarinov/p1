@@ -20,11 +20,12 @@ export default function Login() {
   const form = useForm<LoginForm>({ resolver: zodResolver(formSchema), defaultValues: { username: "", password: "" } })
 
   const onSubmit = async (data: LoginForm) => {
-    const res = await api.login(data)
-    if (res.error) {
-      form.setError("root", { message: res.error })
-    } else {
+    console.log("Submitting", data)
+    try {
+      const res = await api.login(data)
       console.log("Login successful:", res)
+    } catch (error) {
+      console.error("Login failed:", error)
     }
   }
 
