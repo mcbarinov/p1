@@ -5,10 +5,8 @@ import { useAuth } from "@/hooks/useAuth"
 
 export default function Layout() {
   const { user } = useAuth()
-  console.log("[Layout] Rendered, user:", user?.username ?? "null")
 
   if (!user) {
-    console.log("[Layout] No user, redirecting to login")
     return <Navigate to="/login" replace />
   }
   return (

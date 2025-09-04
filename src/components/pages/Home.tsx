@@ -7,15 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 export default function Home() {
   const [forums, setForums] = useState<Forum[]>([])
 
-  console.log("[Home] Component rendered")
 
   useEffect(() => {
-    console.log("[Home] useEffect triggered")
-
     const fetchForums = async () => {
-      console.log("[Home] Fetching forums...")
       const data = await api.getForums()
-      console.log("[Home] Forums fetched:", data.length)
       setForums(data)
     }
 
