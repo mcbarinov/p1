@@ -1,5 +1,6 @@
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import "./index.css"
 import { RouterProvider } from "react-router"
 import { createRouter } from "./router"
@@ -19,13 +20,16 @@ async function startApp() {
 
   // Create router after MSW is ready
   const router = createRouter()
+  const queryClient = new QueryClient()
 
   // Render the app after MSW is ready
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
-      <AuthProvider>
-        <RouterProvider router={router} />
-      </AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
+      </QueryClientProvider>
     </StrictMode>
   )
 }
