@@ -2,36 +2,37 @@
 export type Category = "Technology" | "Science" | "Art"
 
 export interface Forum {
-  id: number
-  name: string
+  id: string // UUID
+  slug: string
+  title: string
   description: string
   category: Category
 }
 
 export interface Post {
-  id: number
-  forumId: number
+  id: string // UUID
+  forumId: string // UUID
   title: string
   content: string
   tags: string[]
-  author: string
+  authorId: string
   createdAt: Date
-  updatedAt: Date
+  updatedAt: Date | null
 }
 
 export interface Comment {
-  id: number
-  postId: number
+  id: string // UUID
+  postId: string // UUID
   content: string
-  author: string
+  authorId: string
   createdAt: Date
-  updatedAt: Date
+  updatedAt: Date | null
 }
 
 export type Role = "admin" | "user"
 
 export interface User {
-  id: number
+  id: string // UUID
   username: string
   role: Role
 }

@@ -13,3 +13,5 @@ This file provides guidance to AI agents when working with code in this reposito
 3. **Critical thinking** - Always critically evaluate user ideas. Users can make mistakes. Think first about whether the user's idea is good before implementing.
 
 4. **Package manager** - Always use pnpm for all package management operations. Never use npm, yarn, or other package managers.
+
+5. **Development server** - Use `pnpm run agent-dev` to start the development server for testing. The `pnpm dev` command is reserved for human developers.
