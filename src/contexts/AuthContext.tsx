@@ -5,10 +5,9 @@ import type { User } from "@/types"
 import { createContext, useEffect, useMemo, useState } from "react"
 
 export interface AuthContextType {
-  isAuthenticated: boolean
+  user: User | null
   login: (username: string, password: string) => Promise<void>
   logout: () => Promise<void>
-  user: User | null
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null)
@@ -32,6 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const logout = async () => {
+    console.log("Logging out")
     await api.logout()
     authStorage.clearAuthData()
     setUser(null)
@@ -39,7 +39,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo<AuthContextType>(() => {
     return {
-      isAuthenticated: !!user,
       login,
       logout,
       user,

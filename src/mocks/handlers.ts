@@ -33,6 +33,19 @@ export const handlers = [
     return HttpResponse.json(response)
   }),
 
+  // Logout endpoint
+  http.post("/api/auth/logout", ({ request }) => {
+    const sessionId = request.headers.get("Authorization")?.split(" ")[1]
+    if (!sessionId) {
+      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    // Invalidate session
+    mockSessions.delete(sessionId)
+
+    return HttpResponse.json({ message: "Logged out successfully" })
+  }),
+
   // Get all forums
   http.get("/api/forums", () => {
     // const validationError = validateSession(request)

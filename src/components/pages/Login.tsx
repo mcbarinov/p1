@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { api } from "@/lib/api"
 import { Button } from "../ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Input } from "../ui/input"
@@ -8,6 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form"
 import { useForm } from "react-hook-form"
+import { HTTPError } from "ky"
+import { useAuth } from "@/hooks/useAuth"
+import { Navigate } from "react-router"
 
 const formSchema = z.object({
   username: z.string().min(2).max(100),
@@ -17,15 +19,24 @@ const formSchema = z.object({
 type LoginForm = z.infer<typeof formSchema>
 
 export default function Login() {
+  const { login, user } = useAuth()
+
   const form = useForm<LoginForm>({ resolver: zodResolver(formSchema), defaultValues: { username: "", password: "" } })
+
+  if (user) {
+    return <Navigate to="/" replace />
+  }
 
   const onSubmit = async (data: LoginForm) => {
     console.log("Submitting", data)
     try {
-      const res = await api.login(data)
-      console.log("Login successful:", res)
+      await login(data.username, data.password)
     } catch (error) {
-      console.error("Login failed:", error)
+      const message =
+        error instanceof HTTPError && error.response.status === 401
+          ? "Invalid username or password"
+          : "An unexpected error occurred"
+      form.setError("root", { message })
     }
   }
 
