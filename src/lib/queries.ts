@@ -8,3 +8,27 @@ export const forumsQueryOptions = () =>
     staleTime: Infinity, // Never consider forums data stale
     gcTime: Infinity, // Never remove from memory - permanent cache
   })
+
+export const forumQueryOptions = (slug: string) =>
+  queryOptions({
+    queryKey: ["forum", slug],
+    queryFn: () => api.getForumBySlug(slug),
+    staleTime: 5 * 60 * 1000, // Consider fresh for 5 minutes
+    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
+  })
+
+export const postsQueryOptions = (slug: string) =>
+  queryOptions({
+    queryKey: ["posts", slug],
+    queryFn: () => api.getPostsByForumSlug(slug),
+    staleTime: 1 * 60 * 1000, // Consider fresh for 1 minute
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
+  })
+
+export const usersQueryOptions = () =>
+  queryOptions({
+    queryKey: ["users"],
+    queryFn: () => api.getUsers(),
+    staleTime: 10 * 60 * 1000, // Consider fresh for 10 minutes
+    gcTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
+  })

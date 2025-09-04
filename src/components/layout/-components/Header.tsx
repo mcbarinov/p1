@@ -7,7 +7,9 @@ export default function Header() {
   const { logout, user } = useAuth()
   return (
     <header className="py-4 border-b flex items-center justify-between">
-      <Link to="/" className="text-2xl font-bold hover:no-underline">DemoForums</Link>
+      <Link to="/" className="text-2xl font-bold hover:no-underline">
+        DemoForums
+      </Link>
 
       <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center space-x-2 font-medium border-0 bg-transparent shadow-none focus:outline-none">

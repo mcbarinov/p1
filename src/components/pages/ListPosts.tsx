@@ -1,15 +1,13 @@
-import { useLoaderData } from "react-router"
-import type { Forum, Post, User } from "@/types"
+import { useParams } from "react-router"
+import { useQuery } from "@tanstack/react-query"
+import { forumQueryOptions, postsQueryOptions, usersQueryOptions } from "@/lib/queries"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-interface LoaderData {
-  forum: Forum
-  posts: Post[]
-  users: User[]
-}
-
 export default function ListPosts() {
-  const { forum, posts, users } = useLoaderData<LoaderData>()
+  const { slug } = useParams<{ slug: string }>()
+  const { data: forum, isLoading: forumLoading, error: forumError } = useQuery(forumQueryOptions(slug!))
+  const { data: posts = [], isLoading: postsLoading, error: postsError } = useQuery(postsQueryOptions(slug!))
+  const { data: users = [], isLoading: usersLoading, error: usersError } = useQuery(usersQueryOptions())
 
   const getUserName = (userId: string) => {
     const user = users.find((u) => u.id === userId)
@@ -23,6 +21,25 @@ export default function ListPosts() {
       month: "short",
       day: "numeric",
     })
+  }
+
+  const isLoading = forumLoading || postsLoading || usersLoading
+  const error = forumError ?? postsError ?? usersError
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="text-center py-8">Loading...</div>
+      </div>
+    )
+  }
+
+  if (error || !forum) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="text-center py-8 text-red-500">Error loading forum data</div>
+      </div>
+    )
   }
 
   return (
