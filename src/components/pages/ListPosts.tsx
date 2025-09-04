@@ -1,22 +1,20 @@
 import { useParams } from "react-router"
-import { useSuspenseQueries } from "@tanstack/react-query"
-import { forumQueryOptions, postsQueryOptions, usersQueryOptions } from "@/lib/queries"
+import { useSuspenseQuery } from "@tanstack/react-query"
+import { postsQueryOptions } from "@/lib/queries"
+import { useForum, useUsers } from "@/hooks/useCache"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 export default function ListPosts() {
-  const { slug } = useParams<{ slug: string }>()
-  
-  const [forumQuery, postsQuery, usersQuery] = useSuspenseQueries({
-    queries: [
-      forumQueryOptions(slug!),
-      postsQueryOptions(slug!),
-      usersQueryOptions(),
-    ],
-  })
+  const { slug = "" } = useParams<{ slug: string }>()
 
-  const forum = forumQuery.data
-  const posts = postsQuery.data
-  const users = usersQuery.data
+  // Get forum from cached forums list - no API call needed
+  const forum = useForum(slug)
+
+  // Get all users from cache - loaded once at app start
+  const users = useUsers()
+
+  // Only posts need to be fetched per forum
+  const { data: posts } = useSuspenseQuery(postsQueryOptions(slug))
 
   const getUserName = (userId: string) => {
     const user = users.find((u) => u.id === userId)
@@ -30,6 +28,14 @@ export default function ListPosts() {
       month: "short",
       day: "numeric",
     })
+  }
+
+  if (!forum) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="text-center py-8 text-red-500">Forum not found</div>
+      </div>
+    )
   }
 
   return (
