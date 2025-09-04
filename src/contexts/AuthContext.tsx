@@ -17,7 +17,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-
   useEffect(() => {
     const authToken = authStorage.getAuthToken()
     const currentUser = authStorage.getCurrentUser()

@@ -1,6 +1,6 @@
 import type { LoginRequest, LoginResponse } from "@/types"
 import { http, HttpResponse } from "msw"
-import { mockForums, mockSessions, mockUsers } from "./data"
+import { mockForums, mockPosts, mockSessions, mockUsers } from "./data"
 
 export const handlers = [
   // Login endpoint
@@ -52,5 +52,40 @@ export const handlers = [
     // if (validationError) return validationError
 
     return HttpResponse.json(mockForums)
+  }),
+
+  // Get forum by slug
+  http.get("/api/forums/:slug", ({ params }) => {
+    const { slug } = params
+    const forum = mockForums.find((f) => f.slug === slug)
+
+    if (!forum) {
+      return HttpResponse.json({ error: "Forum not found" }, { status: 404 })
+    }
+
+    return HttpResponse.json(forum)
+  }),
+
+  // Get posts by forum slug
+  http.get("/api/forums/:slug/posts", ({ params }) => {
+    const { slug } = params
+    const forum = mockForums.find((f) => f.slug === slug)
+
+    if (!forum) {
+      return HttpResponse.json({ error: "Forum not found" }, { status: 404 })
+    }
+
+    const forumPosts = mockPosts.filter((post) => post.forumId === forum.id)
+    return HttpResponse.json(forumPosts)
+  }),
+
+  // Get all users (without passwords)
+  http.get("/api/users", () => {
+    const usersWithoutPasswords = mockUsers.map(({ id, username, role }) => ({
+      id,
+      username,
+      role,
+    }))
+    return HttpResponse.json(usersWithoutPasswords)
   }),
 ]

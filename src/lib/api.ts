@@ -1,4 +1,4 @@
-import type { Forum, LoginRequest, LoginResponse } from "@/types"
+import type { Forum, Post, User, LoginRequest, LoginResponse } from "@/types"
 import { httpClient } from "./http-client"
 
 export const api = {
@@ -13,5 +13,17 @@ export const api = {
   async getForums(): Promise<Forum[]> {
     console.log("Fetching forums...")
     return httpClient.get("api/forums").json<Forum[]>()
+  },
+
+  async getForumBySlug(slug: string): Promise<Forum> {
+    return httpClient.get(`api/forums/${slug}`).json<Forum>()
+  },
+
+  async getPostsByForumSlug(slug: string): Promise<Post[]> {
+    return httpClient.get(`api/forums/${slug}/posts`).json<Post[]>()
+  },
+
+  async getUsers(): Promise<User[]> {
+    return httpClient.get("api/users").json<User[]>()
   },
 }

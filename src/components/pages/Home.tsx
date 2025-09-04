@@ -1,27 +1,13 @@
-import { api } from "@/lib/api"
 import type { Forum } from "@/types"
-import { useEffect, useState } from "react"
-import { Link } from "react-router"
+import { Link, useLoaderData } from "react-router"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function Home() {
-  const [forums, setForums] = useState<Forum[]>([])
-
-
-  useEffect(() => {
-    const fetchForums = async () => {
-      const data = await api.getForums()
-      setForums(data)
-    }
-
-    void fetchForums()
-  }, [])
+  const { forums } = useLoaderData<{ forums: Forum[] }>()
 
   const groupedForums = forums.reduce(
     (acc, forum) => {
-      if (!acc[forum.category]) {
-        acc[forum.category] = []
-      }
+      acc[forum.category] ??= []
       acc[forum.category].push(forum)
       return acc
     },

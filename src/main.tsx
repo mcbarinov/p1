@@ -2,7 +2,7 @@ import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import "./index.css"
 import { RouterProvider } from "react-router"
-import { router } from "./router"
+import { createRouter } from "./router"
 import { AuthProvider } from "./contexts/AuthContext"
 
 async function startApp() {
@@ -11,8 +11,14 @@ async function startApp() {
     const { worker } = await import("@/mocks/browser")
     await worker.start({
       onUnhandledRequest: "warn",
+      serviceWorker: {
+        url: "/mockServiceWorker.js",
+      },
     })
   }
+
+  // Create router after MSW is ready
+  const router = createRouter()
 
   // Render the app after MSW is ready
   createRoot(document.getElementById("root")!).render(
