@@ -19,10 +19,6 @@ export const createRouter = () =>
         {
           index: true,
           Component: Home,
-          loader: async () => {
-            const forums = await api.getForums()
-            return { forums }
-          },
         },
         {
           path: "forums/:slug",
