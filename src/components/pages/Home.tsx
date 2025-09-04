@@ -1,19 +1,11 @@
 import type { Forum } from "@/types"
 import { Link } from "react-router"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useQuery } from "@tanstack/react-query"
+import { useSuspenseQuery } from "@tanstack/react-query"
 import { forumsQueryOptions } from "@/lib/queries"
 
 export default function Home() {
-  const { data: forums = [], isLoading, error } = useQuery(forumsQueryOptions())
-
-  if (isLoading) {
-    return <div className="container mx-auto py-8">Loading forums...</div>
-  }
-
-  if (error) {
-    return <div className="container mx-auto py-8">Error loading forums</div>
-  }
+  const { data: forums } = useSuspenseQuery(forumsQueryOptions())
 
   const groupedForums = forums.reduce(
     (acc, forum) => {
