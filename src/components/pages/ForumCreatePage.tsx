@@ -2,7 +2,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router"
-import { useCreateForum } from "@/lib/mutations"
+import { useCreateForumMutation } from "@/lib/queries"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -24,7 +24,7 @@ type NewForumForm = z.infer<typeof formSchema>
 
 export default function NewForum() {
   const navigate = useNavigate()
-  const createForumMutation = useCreateForum()
+  const createForumMutation = useCreateForumMutation()
 
   const form = useForm<NewForumForm>({
     resolver: zodResolver(formSchema),

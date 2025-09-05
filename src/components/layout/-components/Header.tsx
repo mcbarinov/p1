@@ -6,14 +6,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useQuery } from "@tanstack/react-query"
-import { authQueryOptions } from "@/lib/queries"
-import { useLogout } from "@/lib/mutations"
+import { authQueryOptions, useLogoutMutation } from "@/lib/queries"
 import { ChevronDownIcon, UserIcon, PlusCircleIcon } from "lucide-react"
 import { Link, useNavigate } from "react-router"
 
 export default function Header() {
   const { data: authData } = useQuery(authQueryOptions())
-  const logoutMutation = useLogout()
+  const logoutMutation = useLogoutMutation()
   const navigate = useNavigate()
   return (
     <header className="py-4 border-b flex items-center justify-between">

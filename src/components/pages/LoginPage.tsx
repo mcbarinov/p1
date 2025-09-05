@@ -3,8 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Navigate } from "react-router"
 import { useQuery } from "@tanstack/react-query"
-import { authQueryOptions } from "@/lib/queries"
-import { useLogin } from "@/lib/mutations"
+import { authQueryOptions, useLoginMutation } from "@/lib/queries"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
@@ -20,7 +19,7 @@ type LoginForm = z.infer<typeof formSchema>
 
 export default function Login() {
   const { data: authData } = useQuery(authQueryOptions())
-  const loginMutation = useLogin()
+  const loginMutation = useLoginMutation()
 
   const form = useForm<LoginForm>({ resolver: zodResolver(formSchema), defaultValues: { username: "", password: "" } })
 
