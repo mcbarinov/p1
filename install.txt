@@ -3,6 +3,6 @@ pnpm add -D eslint-plugin-react-x eslint-plugin-react-dom prettier eslint-config
 pnpm add tailwindcss @tailwindcss/vite # Not as dev deps!!!
 echo '@import "tailwindcss";' > src/index.css
 pnpm dlx shadcn@latest init
-pnpm dlx shadcn@latest add dropdown-menu card table form button textarea input sonner
+pnpm dlx shadcn@latest add dropdown-menu card table form button textarea input sonner badge
 pnpm add -D msw
 pnpm dlx msw init public --save

@@ -1,5 +1,5 @@
 import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query"
-import type { Forum, Post, User, LoginRequest, LoginResponse, CreateForumData } from "@/types"
+import type { Forum, Post, User, LoginRequest, LoginResponse, CreateForumData, Comment } from "@/types"
 import type { AuthData } from "./auth-storage"
 import { httpClient } from "./http-client"
 import { authStorage } from "./auth-storage"
@@ -113,6 +113,31 @@ export function useCreatePostMutation() {
     onError: (error) => {
       console.error("Failed to create post:", error)
       toast.error("Failed to create post. Please try again.")
+    },
+  })
+}
+
+export const commentsQueryOptions = (postId: string) =>
+  queryOptions({
+    queryKey: ["comments", postId],
+    queryFn: () => httpClient.get(`api/posts/${postId}/comments`).json<Comment[]>(),
+    staleTime: 30 * 1000, // Consider fresh for 30 seconds
+    gcTime: 2 * 60 * 1000, // Keep in cache for 2 minutes
+  })
+
+export function useCreateCommentMutation() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ postId, content }: { postId: string; content: string }) =>
+      httpClient.post(`api/posts/${postId}/comments`, { json: { content } }).json<Comment>(),
+    onSuccess: (_newComment, variables) => {
+      void queryClient.invalidateQueries({ queryKey: ["comments", variables.postId] })
+      toast.success("Comment added successfully!")
+    },
+    onError: (error) => {
+      console.error("Failed to create comment:", error)
+      toast.error("Failed to add comment. Please try again.")
     },
   })
 }

@@ -1,6 +1,6 @@
-import type { LoginRequest, LoginResponse, Forum, Post, User } from "@/types"
+import type { LoginRequest, LoginResponse, Forum, Post, User, Comment } from "@/types"
 import { http, HttpResponse } from "msw"
-import { mockForums, mockPosts, mockSessions, mockUsers } from "./data"
+import { mockForums, mockPosts, mockSessions, mockUsers, mockComments } from "./data"
 
 // Helper function to validate session and get current user
 function validateSession(request: Request): User | null {
@@ -176,5 +176,48 @@ export const handlers = [
     mockPosts.push(newPost)
 
     return HttpResponse.json(newPost, { status: 201 })
+  }),
+
+  // Get comments for a post
+  http.get("/api/posts/:postId/comments", ({ params, request }) => {
+    const user = validateSession(request)
+    if (!user) {
+      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const { postId } = params
+    const postComments = mockComments.filter((comment) => comment.postId === postId)
+    return HttpResponse.json(postComments)
+  }),
+
+  // Create new comment
+  http.post("/api/posts/:postId/comments", async ({ request, params }) => {
+    const user = validateSession(request)
+    if (!user) {
+      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const { postId } = params
+    const post = mockPosts.find((p) => p.id === postId)
+
+    if (!post) {
+      return HttpResponse.json({ error: "Post not found" }, { status: 404 })
+    }
+
+    const data = (await request.json()) as { content: string }
+
+    const newComment: Comment = {
+      id: crypto.randomUUID(),
+      postId: postId as string,
+      content: data.content,
+      authorId: user.id,
+      createdAt: new Date(),
+      updatedAt: null,
+    }
+
+    // Add to mock comments array
+    mockComments.push(newComment)
+
+    return HttpResponse.json(newComment, { status: 201 })
   }),
 ]
