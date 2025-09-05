@@ -2,13 +2,14 @@ import { Suspense } from "react"
 import { Navigate, Outlet } from "react-router"
 import Footer from "./-components/Footer"
 import Header from "./-components/Header"
-import { useAuth } from "@/hooks/useAuth"
+import { useQuery } from "@tanstack/react-query"
+import { authQueryOptions } from "@/lib/queries"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 export default function Layout() {
-  const { user } = useAuth()
+  const { data: authData } = useQuery(authQueryOptions())
 
-  if (!user) {
+  if (!authData?.user) {
     return <Navigate to="/login" replace />
   }
   return (

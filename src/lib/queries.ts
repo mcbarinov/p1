@@ -1,5 +1,14 @@
 import { queryOptions } from "@tanstack/react-query"
 import { api } from "./api"
+import { authStorage } from "./auth-storage"
+
+export const authQueryOptions = () =>
+  queryOptions({
+    queryKey: ["currentUser"],
+    queryFn: () => authStorage.getAuthData(),
+    staleTime: Infinity, // Never consider auth data stale
+    gcTime: Infinity, // Never remove from memory - permanent cache
+  })
 
 export const forumsQueryOptions = () =>
   queryOptions({

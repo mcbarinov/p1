@@ -5,12 +5,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useAuth } from "@/hooks/useAuth"
+import { useQuery } from "@tanstack/react-query"
+import { authQueryOptions } from "@/lib/queries"
+import { useLogout } from "@/lib/mutations"
 import { ChevronDownIcon, UserIcon, PlusCircleIcon } from "lucide-react"
 import { Link, useNavigate } from "react-router"
 
 export default function Header() {
-  const { logout, user } = useAuth()
+  const { data: authData } = useQuery(authQueryOptions())
+  const logoutMutation = useLogout()
   const navigate = useNavigate()
   return (
     <header className="py-4 border-b flex items-center justify-between">
@@ -21,7 +24,7 @@ export default function Header() {
       <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center space-x-2 font-medium border-0 bg-transparent shadow-none focus:outline-none">
           <UserIcon className="w-5 h-5" />
-          {user?.username}
+          {authData?.user?.username}
           <ChevronDownIcon className="w-4 h-4" />
         </DropdownMenuTrigger>
 
@@ -31,7 +34,7 @@ export default function Header() {
             Create Forum
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => void logout()}>Logout</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => logoutMutation.mutate()}>Logout</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

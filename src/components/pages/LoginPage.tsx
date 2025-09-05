@@ -1,14 +1,15 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { HTTPError } from "ky"
 import { Navigate } from "react-router"
-import { useAuth } from "@/hooks/useAuth"
+import { useQuery } from "@tanstack/react-query"
+import { authQueryOptions } from "@/lib/queries"
+import { useLogin } from "@/lib/mutations"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { HTTPError } from "ky"
 
 const formSchema = z.object({
   username: z.string().min(2).max(100),
@@ -18,25 +19,18 @@ const formSchema = z.object({
 type LoginForm = z.infer<typeof formSchema>
 
 export default function Login() {
-  const { login, user } = useAuth()
+  const { data: authData } = useQuery(authQueryOptions())
+  const loginMutation = useLogin()
 
   const form = useForm<LoginForm>({ resolver: zodResolver(formSchema), defaultValues: { username: "", password: "" } })
 
-  if (user) {
+  if (authData?.user) {
     return <Navigate to="/" replace />
   }
 
-  const onSubmit = async (data: LoginForm) => {
+  const onSubmit = (data: LoginForm) => {
     console.log("Submitting", data)
-    try {
-      await login(data.username, data.password)
-    } catch (error) {
-      const message =
-        error instanceof HTTPError && error.response.status === 401
-          ? "Invalid username or password"
-          : "An unexpected error occurred"
-      form.setError("root", { message })
-    }
+    loginMutation.mutate(data)
   }
 
   return (
@@ -47,7 +41,7 @@ export default function Login() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 w-64">
+            <form onSubmit={(e) => void form.handleSubmit(onSubmit)(e)} className="flex flex-col gap-4 w-64">
               <FormField
                 control={form.control}
                 name="username"
@@ -74,8 +68,16 @@ export default function Login() {
                 )}
               />
 
-              {form.formState.errors.root && <p className="text-sm text-red-500">{form.formState.errors.root.message}</p>}
-              <Button type="submit">Login</Button>
+              {loginMutation.isError && (
+                <p className="text-sm text-red-500">
+                  {loginMutation.error instanceof HTTPError && loginMutation.error.response.status === 401
+                    ? "Invalid username or password"
+                    : "An error occurred. Please try again"}
+                </p>
+              )}
+              <Button type="submit" disabled={loginMutation.isPending}>
+                {loginMutation.isPending ? "Logging in..." : "Login"}
+              </Button>
             </form>
           </Form>
         </CardContent>
