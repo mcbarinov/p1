@@ -30,6 +30,14 @@ export const postsQueryOptions = (slug: string) =>
     gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
   })
 
+export const postQueryOptions = (slug: string, postId: string) =>
+  queryOptions({
+    queryKey: ["post", slug, postId],
+    queryFn: () => httpClient.get(`api/forums/${slug}/posts/${postId}`).json<Post>(),
+    staleTime: 1 * 60 * 1000, // Consider fresh for 1 minute
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
+  })
+
 export const usersQueryOptions = () =>
   queryOptions({
     queryKey: ["users"],

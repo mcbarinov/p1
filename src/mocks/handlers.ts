@@ -122,6 +122,29 @@ export const handlers = [
     return HttpResponse.json(newForum, { status: 201 })
   }),
 
+  // Get single post
+  http.get("/api/forums/:slug/posts/:postId", ({ params, request }) => {
+    const user = validateSession(request)
+    if (!user) {
+      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const { slug, postId } = params
+    const forum = mockForums.find((f) => f.slug === slug)
+
+    if (!forum) {
+      return HttpResponse.json({ error: "Forum not found" }, { status: 404 })
+    }
+
+    const post = mockPosts.find((p) => p.id === postId && p.forumId === forum.id)
+
+    if (!post) {
+      return HttpResponse.json({ error: "Post not found" }, { status: 404 })
+    }
+
+    return HttpResponse.json(post)
+  }),
+
   // Create new post
   http.post("/api/forums/:slug/posts", async ({ request, params }) => {
     const user = validateSession(request)

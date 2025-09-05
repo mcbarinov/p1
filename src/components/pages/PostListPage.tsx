@@ -1,35 +1,21 @@
-import { useParams, Link } from "react-router"
+import { useParams, Link, useNavigate } from "react-router"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { postsQueryOptions } from "@/lib/queries"
-import { useForum, useUsers } from "@/hooks/useCache"
+import { useForum } from "@/hooks/useCache"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
+import { Username } from "@/components/shared/Username"
+import { formatDate } from "@/lib/formatters"
 
 export default function ListPosts() {
   const { slug } = useParams() as { slug: string }
+  const navigate = useNavigate()
 
   // Get forum from cached forums list - no API call needed
   const forum = useForum(slug)
 
-  // Get all users from cache - loaded once at app start
-  const users = useUsers()
-
   // Only posts need to be fetched per forum
   const { data: posts } = useSuspenseQuery(postsQueryOptions(slug))
-
-  const getUserName = (userId: string) => {
-    const user = users.find((u) => u.id === userId)
-    return user?.username ?? "Unknown"
-  }
-
-  const formatDate = (date: Date | string) => {
-    const dateObj = typeof date === "string" ? new Date(date) : date
-    return dateObj.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    })
-  }
 
   if (!forum) {
     return (
@@ -61,9 +47,15 @@ export default function ListPosts() {
         </TableHeader>
         <TableBody>
           {posts.map((post) => (
-            <TableRow key={post.id}>
+            <TableRow
+              key={post.id}
+              className="cursor-pointer hover:bg-muted/50"
+              onClick={() => void navigate(`/forums/${slug}/${post.id}`)}
+            >
               <TableCell>{formatDate(post.createdAt)}</TableCell>
-              <TableCell>{getUserName(post.authorId)}</TableCell>
+              <TableCell>
+                <Username id={post.authorId} />
+              </TableCell>
               <TableCell>{post.title}</TableCell>
             </TableRow>
           ))}
