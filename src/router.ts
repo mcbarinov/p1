@@ -1,14 +1,15 @@
 import { createBrowserRouter } from "react-router"
-import Home from "./components/pages/Home"
-import Login from "./components/pages/Login"
+import ForumListPage from "./components/pages/ForumListPage"
+import LoginPage from "./components/pages/LoginPage"
 import Layout from "./components/layout/Layout"
-import ListPosts from "./components/pages/ListPosts"
+import PostListPage from "./components/pages/PostListPage"
+import ForumCreatePage from "./components/pages/ForumCreatePage"
 
 export const createRouter = () =>
   createBrowserRouter([
     {
       path: "/login",
-      Component: Login,
+      Component: LoginPage,
     },
     {
       path: "/",
@@ -17,11 +18,15 @@ export const createRouter = () =>
       children: [
         {
           index: true,
-          Component: Home,
+          Component: ForumListPage,
+        },
+        {
+          path: "forums/new",
+          Component: ForumCreatePage,
         },
         {
           path: "forums/:slug",
-          Component: ListPosts,
+          Component: PostListPage,
         },
       ],
     },

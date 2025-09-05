@@ -1,4 +1,4 @@
-import type { LoginRequest, LoginResponse } from "@/types"
+import type { LoginRequest, LoginResponse, Forum } from "@/types"
 import { http, HttpResponse } from "msw"
 import { mockForums, mockPosts, mockSessions, mockUsers } from "./data"
 
@@ -87,5 +87,21 @@ export const handlers = [
       role,
     }))
     return HttpResponse.json(usersWithoutPasswords)
+  }),
+
+  // Create new forum
+  http.post("/api/forums", async ({ request }) => {
+    const data = (await request.json()) as Omit<Forum, "id">
+
+    // Generate a unique ID
+    const newForum: Forum = {
+      id: crypto.randomUUID(),
+      ...data,
+    }
+
+    // Add to mock forums array
+    mockForums.push(newForum)
+
+    return HttpResponse.json(newForum, { status: 201 })
   }),
 ]

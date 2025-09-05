@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 import { Navigate, Outlet } from "react-router"
-import { Footer } from "./-components/Footer"
+import Footer from "./-components/Footer"
 import Header from "./-components/Header"
 import { useAuth } from "@/hooks/useAuth"
 import { ErrorBoundary } from "@/components/ErrorBoundary"

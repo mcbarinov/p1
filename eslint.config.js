@@ -11,7 +11,7 @@ import pluginQuery from "@tanstack/eslint-plugin-query"
 import { defineConfig, globalIgnores } from "eslint/config"
 
 export default defineConfig([
-  globalIgnores(["dist"]),
+  globalIgnores(["dist", "public/mockServiceWorker.js"]),
   {
     files: ["**/*.{ts,tsx}"],
     extends: [

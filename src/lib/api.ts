@@ -26,4 +26,8 @@ export const api = {
   async getUsers(): Promise<User[]> {
     return httpClient.get("api/users").json<User[]>()
   },
+
+  async createForum(data: Omit<Forum, "id">): Promise<Forum> {
+    return httpClient.post("api/forums", { json: data }).json<Forum>()
+  },
 }

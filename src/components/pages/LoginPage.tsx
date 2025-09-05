@@ -1,15 +1,14 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { Button } from "../ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
-import { Input } from "../ui/input"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-
-import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form"
 import { useForm } from "react-hook-form"
 import { HTTPError } from "ky"
-import { useAuth } from "@/hooks/useAuth"
 import { Navigate } from "react-router"
+import { useAuth } from "@/hooks/useAuth"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 
 const formSchema = z.object({
   username: z.string().min(2).max(100),
