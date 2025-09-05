@@ -27,11 +27,16 @@ async function startApp() {
   const authData = authStorage.getAuthData()
   if (authData) {
     queryClient.setQueryData(["currentUser"], authData)
-  }
 
-  // Prefetch critical data that will be cached permanently
-  // This ensures users and forums are loaded once at app start
-  await Promise.all([queryClient.prefetchQuery(forumsQueryOptions()), queryClient.prefetchQuery(usersQueryOptions())])
+    // Prefetch critical data only if authenticated
+    // This ensures users and forums are loaded once at app start
+    try {
+      await Promise.all([queryClient.prefetchQuery(forumsQueryOptions()), queryClient.prefetchQuery(usersQueryOptions())])
+    } catch (error) {
+      // If prefetch fails (likely 401), the afterResponse hook will handle redirect
+      console.error("Failed to prefetch data:", error)
+    }
+  }
 
   // Render the app after MSW is ready
   createRoot(document.getElementById("root")!).render(

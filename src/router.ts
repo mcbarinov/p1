@@ -4,6 +4,7 @@ import LoginPage from "./components/pages/LoginPage"
 import Layout from "./components/layout/Layout"
 import PostListPage from "./components/pages/PostListPage"
 import ForumCreatePage from "./components/pages/ForumCreatePage"
+import PostCreatePage from "./components/pages/PostCreatePage"
 
 export const createRouter = () =>
   createBrowserRouter([
@@ -27,6 +28,10 @@ export const createRouter = () =>
         {
           path: "forums/:slug",
           Component: PostListPage,
+        },
+        {
+          path: "forums/:slug/new",
+          Component: PostCreatePage,
         },
       ],
     },

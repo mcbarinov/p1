@@ -1,11 +1,12 @@
-import { useParams } from "react-router"
+import { useParams, Link } from "react-router"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { postsQueryOptions } from "@/lib/queries"
 import { useForum, useUsers } from "@/hooks/useCache"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
 
 export default function ListPosts() {
-  const { slug = "" } = useParams<{ slug: string }>()
+  const { slug } = useParams() as { slug: string }
 
   // Get forum from cached forums list - no API call needed
   const forum = useForum(slug)
@@ -40,9 +41,14 @@ export default function ListPosts() {
 
   return (
     <div className="container mx-auto p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">{forum.title}</h1>
-        <p className="text-muted-foreground">{forum.description}</p>
+      <div className="mb-8 flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">{forum.title}</h1>
+          <p className="text-muted-foreground">{forum.description}</p>
+        </div>
+        <Link to={`/forums/${slug}/new`}>
+          <Button>New Post</Button>
+        </Link>
       </div>
 
       <Table>

@@ -1,5 +1,5 @@
 import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query"
-import type { Forum, Post, User, LoginRequest, LoginResponse } from "@/types"
+import type { Forum, Post, User, LoginRequest, LoginResponse, CreateForumData } from "@/types"
 import type { AuthData } from "./auth-storage"
 import { httpClient } from "./http-client"
 import { authStorage } from "./auth-storage"
@@ -37,13 +37,6 @@ export const usersQueryOptions = () =>
     staleTime: Infinity, // Never consider users data stale
     gcTime: Infinity, // Never remove from memory - permanent cache
   })
-
-interface CreateForumData {
-  title: string
-  slug: string
-  description: string
-  category: "Technology" | "Science" | "Art"
-}
 
 export function useCreateForumMutation() {
   const queryClient = useQueryClient()
@@ -95,6 +88,23 @@ export function useLogoutMutation() {
     onError: (error) => {
       console.error("Logout failed:", error)
       toast.error("Failed to logout. Please try again.")
+    },
+  })
+}
+
+export function useCreatePostMutation() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ forumSlug, ...data }: { title: string; content: string; tags: string[]; forumSlug: string }) =>
+      httpClient.post(`api/forums/${forumSlug}/posts`, { json: data }).json<Post>(),
+    onSuccess: (_newPost, variables) => {
+      void queryClient.invalidateQueries({ queryKey: ["posts", variables.forumSlug] })
+      toast.success("Post created successfully!")
+    },
+    onError: (error) => {
+      console.error("Failed to create post:", error)
+      toast.error("Failed to create post. Please try again.")
     },
   })
 }

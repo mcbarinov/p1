@@ -1,6 +1,17 @@
-import type { LoginRequest, LoginResponse, Forum } from "@/types"
+import type { LoginRequest, LoginResponse, Forum, Post, User } from "@/types"
 import { http, HttpResponse } from "msw"
 import { mockForums, mockPosts, mockSessions, mockUsers } from "./data"
+
+// Helper function to validate session and get current user
+function validateSession(request: Request): User | null {
+  const authHeader = request.headers.get("Authorization")
+  if (!authHeader?.startsWith("Bearer ")) {
+    return null
+  }
+
+  const token = authHeader.split(" ")[1]
+  return mockSessions.get(token) ?? null
+}
 
 export const handlers = [
   // Login endpoint
@@ -35,39 +46,35 @@ export const handlers = [
 
   // Logout endpoint
   http.post("/api/auth/logout", ({ request }) => {
-    const sessionId = request.headers.get("Authorization")?.split(" ")[1]
-    if (!sessionId) {
+    const user = validateSession(request)
+    if (!user) {
       return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     // Invalidate session
-    mockSessions.delete(sessionId)
+    const token = request.headers.get("Authorization")?.split(" ")[1]
+    if (token) mockSessions.delete(token)
 
     return HttpResponse.json({ message: "Logged out successfully" })
   }),
 
   // Get all forums
-  http.get("/api/forums", () => {
-    // const validationError = validateSession(request)
-    // if (validationError) return validationError
+  http.get("/api/forums", ({ request }) => {
+    const user = validateSession(request)
+    if (!user) {
+      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
 
     return HttpResponse.json(mockForums)
   }),
 
-  // Get forum by slug
-  http.get("/api/forums/:slug", ({ params }) => {
-    const { slug } = params
-    const forum = mockForums.find((f) => f.slug === slug)
-
-    if (!forum) {
-      return HttpResponse.json({ error: "Forum not found" }, { status: 404 })
+  // Get posts by forum slug
+  http.get("/api/forums/:slug/posts", ({ params, request }) => {
+    const user = validateSession(request)
+    if (!user) {
+      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    return HttpResponse.json(forum)
-  }),
-
-  // Get posts by forum slug
-  http.get("/api/forums/:slug/posts", ({ params }) => {
     const { slug } = params
     const forum = mockForums.find((f) => f.slug === slug)
 
@@ -80,7 +87,12 @@ export const handlers = [
   }),
 
   // Get all users (without passwords)
-  http.get("/api/users", () => {
+  http.get("/api/users", ({ request }) => {
+    const user = validateSession(request)
+    if (!user) {
+      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const usersWithoutPasswords = mockUsers.map(({ id, username, role }) => ({
       id,
       username,
@@ -91,6 +103,11 @@ export const handlers = [
 
   // Create new forum
   http.post("/api/forums", async ({ request }) => {
+    const user = validateSession(request)
+    if (!user) {
+      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const data = (await request.json()) as Omit<Forum, "id">
 
     // Generate a unique ID
@@ -103,5 +120,38 @@ export const handlers = [
     mockForums.push(newForum)
 
     return HttpResponse.json(newForum, { status: 201 })
+  }),
+
+  // Create new post
+  http.post("/api/forums/:slug/posts", async ({ request, params }) => {
+    const user = validateSession(request)
+    if (!user) {
+      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const { slug } = params
+    const forum = mockForums.find((f) => f.slug === slug)
+
+    if (!forum) {
+      return HttpResponse.json({ error: "Forum not found" }, { status: 404 })
+    }
+
+    const data = (await request.json()) as { title: string; content: string; tags: string[] }
+
+    const newPost: Post = {
+      id: crypto.randomUUID(),
+      forumId: forum.id,
+      title: data.title,
+      content: data.content,
+      tags: data.tags,
+      authorId: user.id,
+      createdAt: new Date(),
+      updatedAt: null,
+    }
+
+    // Add to mock posts array
+    mockPosts.push(newPost)
+
+    return HttpResponse.json(newPost, { status: 201 })
   }),
 ]

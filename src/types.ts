@@ -46,3 +46,9 @@ export interface LoginResponse {
   authToken: string
   user: User
 }
+export interface CreateForumData {
+  title: string
+  slug: string
+  description: string
+  category: "Technology" | "Science" | "Art"
+}
