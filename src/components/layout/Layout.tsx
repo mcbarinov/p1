@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { Navigate, Outlet } from "react-router"
+import { Navigate, Outlet, useLocation } from "react-router"
 import Footer from "./-components/Footer"
 import Header from "./-components/Header"
 import { useQuery } from "@tanstack/react-query"
@@ -7,6 +7,7 @@ import { authQueryOptions } from "@/lib/queries"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 export default function Layout() {
+  const location = useLocation()
   const { data: authData } = useQuery(authQueryOptions())
 
   if (!authData?.user) {
@@ -17,7 +18,7 @@ export default function Layout() {
       <Header />
 
       <main className="flex-1 py-6">
-        <ErrorBoundary>
+        <ErrorBoundary resetKey={location.pathname}>
           <Suspense
             fallback={
               <div className="container mx-auto py-8">

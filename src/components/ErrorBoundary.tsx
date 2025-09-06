@@ -1,10 +1,13 @@
-import { Component, type ReactNode, useEffect, useRef } from "react"
+import { Component, type ReactNode } from "react"
 import { Button } from "@/components/ui/button"
-import { useLocation } from "react-router"
 
 interface Props {
   children: ReactNode
   fallback?: (error: Error, reset: () => void) => ReactNode
+  /**
+   * Change this value (e.g. route pathname) to auto-reset the boundary.
+   */
+  resetKey?: unknown
 }
 
 interface State {
@@ -12,39 +15,10 @@ interface State {
   error: Error | null
 }
 
-/**
- * Error boundary that automatically resets when the route changes.
- * This ensures users can navigate away from error pages by clicking links.
- */
-export function ErrorBoundary({ children, fallback }: Props) {
-  const location = useLocation()
-  const resetRef = useRef<(() => void) | null>(null)
-
-  /**
-   * Reset error state when route changes
-   */
-  useEffect(() => {
-    if (resetRef.current) {
-      resetRef.current()
-    }
-  }, [location.pathname])
-
-  return (
-    <ErrorBoundaryClass fallback={fallback} resetRef={resetRef}>
-      {children}
-    </ErrorBoundaryClass>
-  )
-}
-
-interface ErrorBoundaryClassProps extends Props {
-  resetRef: React.MutableRefObject<(() => void) | null>
-}
-
-class ErrorBoundaryClass extends Component<ErrorBoundaryClassProps, State> {
-  constructor(props: ErrorBoundaryClassProps) {
+export class ErrorBoundary extends Component<Props, State> {
+  constructor(props: Props) {
     super(props)
     this.state = { hasError: false, error: null }
-    props.resetRef.current = this.reset
   }
 
   static getDerivedStateFromError(error: Error): State {
@@ -57,6 +31,12 @@ class ErrorBoundaryClass extends Component<ErrorBoundaryClassProps, State> {
 
   reset = () => {
     this.setState({ hasError: false, error: null })
+  }
+
+  componentDidUpdate(prevProps: Readonly<Props>) {
+    if (prevProps.resetKey !== this.props.resetKey && this.state.hasError) {
+      this.reset()
+    }
   }
 
   render() {
