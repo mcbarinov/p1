@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { forumsQueryOptions, usersQueryOptions } from "@/lib/queries"
+import { NotFoundError } from "@/lib/errors"
 import type { User, Forum } from "@/types"
 
 /**
@@ -14,9 +15,13 @@ export function useUsers() {
 /**
  * Hook to get a specific user by ID from cached users list
  */
-export function useUser(userId: string): User | undefined {
+export function useUser(userId: string): User {
   const users = useUsers()
-  return users.find((u) => u.id === userId)
+  const user = users.find((u) => u.id === userId)
+  if (!user) {
+    throw new NotFoundError("User not found")
+  }
+  return user
 }
 
 /**
@@ -31,7 +36,11 @@ export function useForums() {
 /**
  * Hook to get a specific forum by slug from cached forums list
  */
-export function useForum(slug: string): Forum | undefined {
+export function useForum(slug: string): Forum {
   const forums = useForums()
-  return forums.find((f) => f.slug === slug)
+  const forum = forums.find((f) => f.slug === slug)
+  if (!forum) {
+    throw new NotFoundError("Forum not found")
+  }
+  return forum
 }
