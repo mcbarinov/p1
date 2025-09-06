@@ -1,6 +1,6 @@
 import type { LoginRequest, LoginResponse, Forum, Post, User, Comment } from "@/types"
 import { http, HttpResponse } from "msw"
-import { mockForums, mockPosts, mockSessions, mockUsers, mockComments } from "./data"
+import { mockForums, mockPosts, mockUsers, mockComments, mockSessions } from "./data"
 
 // Helper function to validate session and get current user
 function validateSession(request: Request): User | null {
@@ -10,7 +10,25 @@ function validateSession(request: Request): User | null {
   }
 
   const token = authHeader.split(" ")[1]
-  return mockSessions.get(token) ?? null
+
+  // First try to get from in-memory mockSessions
+  let user = mockSessions.get(token)
+
+  // If not found, try localStorage
+  if (!user) {
+    try {
+      const stored = localStorage.getItem(`msw-session-${token}`)
+      if (stored) {
+        user = JSON.parse(stored) as User
+        // Restore to in-memory map for faster access
+        mockSessions.set(token, user)
+      }
+    } catch (error) {
+      console.error("Failed to load session from localStorage:", error)
+    }
+  }
+
+  return user ?? null
 }
 
 export const handlers = [
@@ -33,8 +51,13 @@ export const handlers = [
       role: user.role,
     }
 
-    // Store session
+    // Store session in memory and localStorage
     mockSessions.set(sessionId, userWithoutPassword)
+    try {
+      localStorage.setItem(`msw-session-${sessionId}`, JSON.stringify(userWithoutPassword))
+    } catch (error) {
+      console.error("Failed to save session to localStorage:", error)
+    }
 
     const response: LoginResponse = {
       user: userWithoutPassword,
@@ -51,9 +74,16 @@ export const handlers = [
       return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Invalidate session
+    // Invalidate session from memory and localStorage
     const token = request.headers.get("Authorization")?.split(" ")[1]
-    if (token) mockSessions.delete(token)
+    if (token) {
+      mockSessions.delete(token)
+      try {
+        localStorage.removeItem(`msw-session-${token}`)
+      } catch (error) {
+        console.error("Failed to remove session from localStorage:", error)
+      }
+    }
 
     return HttpResponse.json({ message: "Logged out successfully" })
   }),
