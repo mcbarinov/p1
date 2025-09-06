@@ -101,6 +101,7 @@ export const mockPosts: Post[] = [
   {
     id: generateId("post-1"),
     forumId: generateId("tech-web"),
+    number: 1,
     title: "React 19: What's New and Exciting",
     content:
       "React 19 brings significant improvements to performance and developer experience. The new compiler optimizations reduce bundle sizes by up to 30%, while the enhanced Suspense boundaries make data fetching more intuitive. Server components are now production-ready, offering seamless integration between client and server code.",
@@ -112,6 +113,7 @@ export const mockPosts: Post[] = [
   {
     id: generateId("post-2"),
     forumId: generateId("tech-web"),
+    number: 2,
     title: "Tailwind CSS v4: A Game Changer",
     content:
       "Tailwind CSS v4 introduces a revolutionary new engine that's 10x faster than v3. The new oxide engine is written in Rust and brings lightning-fast builds. Native CSS cascade layers support means better integration with existing stylesheets. The new variant system is more flexible and powerful than ever.",
@@ -123,6 +125,7 @@ export const mockPosts: Post[] = [
   {
     id: generateId("post-3"),
     forumId: generateId("tech-web"),
+    number: 3,
     title: "Building Type-Safe APIs with TypeScript and Zod",
     content:
       "Learn how to create fully type-safe APIs using TypeScript and Zod. This approach ensures runtime validation matches compile-time types, eliminating the gap between what TypeScript thinks your data looks like and what it actually is. We'll cover schema definition, validation, and automatic type inference.",
@@ -136,6 +139,7 @@ export const mockPosts: Post[] = [
   {
     id: generateId("post-4"),
     forumId: generateId("tech-ai"),
+    number: 1,
     title: "Understanding Transformer Architecture",
     content:
       "Transformers have revolutionized NLP and computer vision. This post breaks down the attention mechanism, positional encoding, and the encoder-decoder structure. We'll implement a simple transformer from scratch to understand how self-attention enables models to capture long-range dependencies in sequences.",
@@ -147,6 +151,7 @@ export const mockPosts: Post[] = [
   {
     id: generateId("post-5"),
     forumId: generateId("tech-ai"),
+    number: 2,
     title: "Fine-tuning LLMs for Domain-Specific Tasks",
     content:
       "A practical guide to fine-tuning large language models for specialized domains. We'll explore LoRA, QLoRA, and full fine-tuning approaches. Learn about dataset preparation, hyperparameter tuning, and evaluation metrics. Includes code examples using Hugging Face Transformers and PEFT libraries.",
@@ -160,6 +165,7 @@ export const mockPosts: Post[] = [
   {
     id: generateId("post-6"),
     forumId: generateId("tech-mobile"),
+    number: 1,
     title: "SwiftUI vs UIKit: When to Use Each",
     content:
       "While SwiftUI is the future of iOS development, UIKit still has its place. This post examines real-world scenarios where each framework excels. SwiftUI shines in new projects with its declarative syntax and automatic state management. UIKit remains essential for complex custom animations and legacy codebases.",
@@ -171,6 +177,7 @@ export const mockPosts: Post[] = [
   {
     id: generateId("post-7"),
     forumId: generateId("tech-mobile"),
+    number: 2,
     title: "React Native Performance Optimization Guide",
     content:
       "Comprehensive guide to optimizing React Native apps. Cover topics like reducing bridge calls, implementing native modules for performance-critical code, optimizing list rendering with FlashList, and using Hermes engine. Real-world examples show 50%+ performance improvements in production apps.",
@@ -184,6 +191,7 @@ export const mockPosts: Post[] = [
   {
     id: generateId("post-8"),
     forumId: generateId("sci-physics"),
+    number: 1,
     title: "Quantum Entanglement Explained Simply",
     content:
       "Quantum entanglement seems magical but follows strict rules. When particles become entangled, measuring one instantly affects the other regardless of distance. This isn't faster-than-light communication - no information travels. Instead, the particles share a quantum state that collapses upon measurement. Recent experiments have demonstrated entanglement across thousands of kilometers.",
@@ -195,6 +203,7 @@ export const mockPosts: Post[] = [
   {
     id: generateId("post-9"),
     forumId: generateId("sci-physics"),
+    number: 2,
     title: "Dark Matter: What We Know in 2024",
     content:
       "Despite making up 85% of matter in the universe, dark matter remains elusive. Recent observations from the James Webb Space Telescope have provided new constraints on dark matter models. We'll explore WIMPs, axions, and primordial black holes as candidates. The latest experiments at CERN and underground detectors continue the search.",
@@ -208,6 +217,7 @@ export const mockPosts: Post[] = [
   {
     id: generateId("post-10"),
     forumId: generateId("sci-bio"),
+    number: 1,
     title: "CRISPR Gene Editing: Latest Breakthroughs",
     content:
       "CRISPR technology continues to advance rapidly. Prime editing now allows precise insertions, deletions, and replacements without double-strand breaks. Base editors can change single nucleotides with minimal off-target effects. Clinical trials for sickle cell disease and cancer treatments show promising results. The ethical implications remain hotly debated.",
@@ -219,6 +229,7 @@ export const mockPosts: Post[] = [
   {
     id: generateId("post-11"),
     forumId: generateId("sci-bio"),
+    number: 2,
     title: "The Microbiome's Role in Mental Health",
     content:
       "Growing evidence links gut bacteria to brain function through the gut-brain axis. Studies show certain bacterial strains influence neurotransmitter production, affecting mood and cognition. Probiotics and dietary interventions show promise for treating depression and anxiety. The mechanisms involve vagus nerve signaling, metabolite production, and immune modulation.",
@@ -232,6 +243,7 @@ export const mockPosts: Post[] = [
   {
     id: generateId("post-12"),
     forumId: generateId("sci-chem"),
+    number: 1,
     title: "Green Chemistry: Sustainable Synthesis Methods",
     content:
       "Green chemistry principles are transforming industrial processes. Catalytic reactions replace stoichiometric ones, reducing waste. Supercritical CO2 serves as a benign solvent. Enzyme catalysis enables reactions at room temperature. These methods cut energy use and eliminate toxic reagents while maintaining or improving yields.",
@@ -245,6 +257,7 @@ export const mockPosts: Post[] = [
   {
     id: generateId("post-13"),
     forumId: generateId("art-digital"),
+    number: 1,
     title: "AI Art Tools: Creativity or Controversy?",
     content:
       "AI art generators like Midjourney and DALL-E spark heated debate. Artists worry about job displacement and copyright issues. Others see AI as a powerful creative tool. The technology democratizes art creation but raises questions about authenticity and originality. How do we balance innovation with protecting artists' livelihoods?",
@@ -256,6 +269,7 @@ export const mockPosts: Post[] = [
   {
     id: generateId("post-14"),
     forumId: generateId("art-digital"),
+    number: 2,
     title: "Blender 4.0: Professional 3D for Everyone",
     content:
       "Blender 4.0 cements its position as industry-standard software. The Principled BSDF v2 brings physically accurate materials. Geometry nodes enable procedural modeling rivaling Houdini. Real-time ray tracing in the viewport speeds up workflows. Best of all, it remains completely free and open-source.",
@@ -269,6 +283,7 @@ export const mockPosts: Post[] = [
   {
     id: generateId("post-15"),
     forumId: generateId("art-trad"),
+    number: 1,
     title: "Oil Painting Techniques: Alla Prima vs Glazing",
     content:
       "Two fundamental oil painting approaches offer different advantages. Alla prima (wet-on-wet) creates spontaneous, energetic works in single sessions. Glazing builds luminous depth through transparent layers over weeks. Masters like Rembrandt combined both techniques. Modern artists often choose based on subject matter and desired mood.",
@@ -280,6 +295,7 @@ export const mockPosts: Post[] = [
   {
     id: generateId("post-16"),
     forumId: generateId("art-trad"),
+    number: 2,
     title: "Watercolor: Mastering the Unpredictable Medium",
     content:
       "Watercolor's transparency and fluidity make it uniquely challenging. Success requires understanding water-to-pigment ratios, paper characteristics, and timing. Techniques like wet-on-wet create soft blends while dry brush adds texture. The key is embracing happy accidents and working with the medium's spontaneous nature rather than fighting it.",
@@ -293,6 +309,7 @@ export const mockPosts: Post[] = [
   {
     id: generateId("post-17"),
     forumId: generateId("art-photo"),
+    number: 1,
     title: "Street Photography: Ethics and Techniques",
     content:
       "Street photography captures authentic human moments but raises privacy concerns. Legal rights vary by country - know your local laws. Techniques include zone focusing for quick shots, using reflections for creative compositions, and developing situational awareness. Most importantly, respect your subjects and consider the stories you're telling.",
@@ -304,6 +321,7 @@ export const mockPosts: Post[] = [
   {
     id: generateId("post-18"),
     forumId: generateId("art-photo"),
+    number: 2,
     title: "Astrophotography on a Budget",
     content:
       "Stunning night sky photos don't require expensive equipment. A basic DSLR, tripod, and wide lens can capture the Milky Way. Key settings: manual mode, 20-second exposure, f/2.8, ISO 3200. Use the 500 rule to avoid star trails. Free software like DeepSkyStacker helps combine multiple exposures for noise reduction.",

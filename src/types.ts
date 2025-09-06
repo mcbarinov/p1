@@ -12,6 +12,7 @@ export interface Forum {
 export interface Post {
   id: string // UUID
   forumId: string // UUID
+  number: number // Auto-increment per forum
   title: string
   content: string
   tags: string[]

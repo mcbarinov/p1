@@ -153,20 +153,20 @@ export const handlers = [
   }),
 
   // Get single post
-  http.get("/api/forums/:slug/posts/:postId", ({ params, request }) => {
+  http.get("/api/forums/:slug/posts/:postNumber", ({ params, request }) => {
     const user = validateSession(request)
     if (!user) {
       return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { slug, postId } = params
+    const { slug, postNumber } = params
     const forum = mockForums.find((f) => f.slug === slug)
 
     if (!forum) {
       return HttpResponse.json({ error: "Forum not found" }, { status: 404 })
     }
 
-    const post = mockPosts.find((p) => p.id === postId && p.forumId === forum.id)
+    const post = mockPosts.find((p) => p.number === Number(postNumber) && p.forumId === forum.id)
 
     if (!post) {
       return HttpResponse.json({ error: "Post not found" }, { status: 404 })
@@ -191,9 +191,14 @@ export const handlers = [
 
     const data = (await request.json()) as { title: string; content: string; tags: string[] }
 
+    // Calculate the next post number for this forum
+    const forumPosts = mockPosts.filter((p) => p.forumId === forum.id)
+    const nextNumber = forumPosts.length > 0 ? Math.max(...forumPosts.map((p) => p.number)) + 1 : 1
+
     const newPost: Post = {
       id: crypto.randomUUID(),
       forumId: forum.id,
+      number: nextNumber,
       title: data.title,
       content: data.content,
       tags: data.tags,

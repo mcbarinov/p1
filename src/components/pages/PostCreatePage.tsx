@@ -38,12 +38,12 @@ export default function PostCreatePage() {
       .filter(Boolean)
 
     try {
-      await createPostMutation.mutateAsync({
+      const newPost = await createPostMutation.mutateAsync({
         ...data,
         tags,
         forumSlug: slug,
       })
-      void navigate(`/forums/${slug}`)
+      void navigate(`/forums/${slug}/${newPost.number}`)
     } catch {
       form.setError("root", { message: "Failed to create post" })
     }

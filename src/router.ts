@@ -35,7 +35,7 @@ export const createRouter = () =>
           Component: PostCreatePage,
         },
         {
-          path: "forums/:slug/:postId",
+          path: "forums/:slug/:postNumber",
           Component: PostViewPage,
         },
       ],

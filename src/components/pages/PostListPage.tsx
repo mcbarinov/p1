@@ -50,7 +50,7 @@ export default function ListPosts() {
             <TableRow
               key={post.id}
               className="cursor-pointer hover:bg-muted/50"
-              onClick={() => void navigate(`/forums/${slug}/${post.id}`)}
+              onClick={() => void navigate(`/forums/${slug}/${post.number}`)}
             >
               <TableCell>{formatDate(post.createdAt)}</TableCell>
               <TableCell>

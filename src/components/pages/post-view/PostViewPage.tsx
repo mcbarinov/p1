@@ -8,10 +8,10 @@ import { CommentForm } from "./-components/CommentForm"
 import { CommentList } from "./-components/CommentList"
 
 export default function PostViewPage() {
-  const { slug, postId } = useParams() as { slug: string; postId: string }
+  const { slug, postNumber } = useParams() as { slug: string; postNumber: string }
 
   const forum = useForum(slug)
-  const { data: post } = useSuspenseQuery(postQueryOptions(slug, postId))
+  const { data: post } = useSuspenseQuery(postQueryOptions(slug, postNumber))
 
   if (!forum) {
     return (
@@ -30,9 +30,9 @@ export default function PostViewPage() {
 
       <PostDetail post={post} />
 
-      <CommentForm postId={postId} />
+      <CommentForm postId={post.id} />
 
-      <CommentList postId={postId} />
+      <CommentList postId={post.id} />
     </div>
   )
 }
