@@ -7,10 +7,11 @@ import { Textarea } from "@/components/ui/textarea"
 import { Loader2 } from "lucide-react"
 
 interface CommentFormProps {
-  postId: string
+  slug: string
+  postNumber: string
 }
 
-export function CommentForm({ postId }: CommentFormProps) {
+export function CommentForm({ slug, postNumber }: CommentFormProps) {
   const [content, setContent] = useState("")
   const { data: authData } = useSuspenseQuery(authQueryOptions())
   const createComment = useCreateCommentMutation()
@@ -21,7 +22,7 @@ export function CommentForm({ postId }: CommentFormProps) {
     if (!content.trim()) return
 
     createComment.mutate(
-      { postId, content: content.trim() },
+      { slug, postNumber, content: content.trim() },
       {
         onSuccess: () => {
           setContent("")

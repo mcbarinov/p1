@@ -57,7 +57,8 @@ export function useCreateForumMutation() {
     },
     onError: (error) => {
       console.error("Failed to create forum:", error)
-      toast.error("Failed to create forum. Please try again.")
+      const message = error instanceof Error ? error.message : "Failed to create forum. Please try again."
+      toast.error(message)
     },
   })
 }
@@ -117,10 +118,10 @@ export function useCreatePostMutation() {
   })
 }
 
-export const commentsQueryOptions = (postId: string) =>
+export const commentsQueryOptions = (slug: string, postNumber: string) =>
   queryOptions({
-    queryKey: ["comments", postId],
-    queryFn: () => httpClient.get(`api/posts/${postId}/comments`).json<Comment[]>(),
+    queryKey: ["comments", slug, postNumber],
+    queryFn: () => httpClient.get(`api/forums/${slug}/posts/${postNumber}/comments`).json<Comment[]>(),
     staleTime: 30 * 1000, // Consider fresh for 30 seconds
     gcTime: 2 * 60 * 1000, // Keep in cache for 2 minutes
   })
@@ -129,10 +130,10 @@ export function useCreateCommentMutation() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ postId, content }: { postId: string; content: string }) =>
-      httpClient.post(`api/posts/${postId}/comments`, { json: { content } }).json<Comment>(),
+    mutationFn: ({ slug, postNumber, content }: { slug: string; postNumber: string; content: string }) =>
+      httpClient.post(`api/forums/${slug}/posts/${postNumber}/comments`, { json: { content } }).json<Comment>(),
     onSuccess: (_newComment, variables) => {
-      void queryClient.invalidateQueries({ queryKey: ["comments", variables.postId] })
+      void queryClient.invalidateQueries({ queryKey: ["comments", variables.slug, variables.postNumber] })
       toast.success("Comment added successfully!")
     },
     onError: (error) => {

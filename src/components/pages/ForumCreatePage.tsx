@@ -40,8 +40,13 @@ export default function NewForum() {
     try {
       await createForumMutation.mutateAsync(data)
       void navigate("/")
-    } catch {
-      form.setError("root", { message: "Failed to create forum. Please try again." })
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to create forum. Please try again."
+      form.setError("root", { message })
+      // Also set specific field error if it's a slug conflict
+      if (message.includes("slug")) {
+        form.setError("slug", { message })
+      }
     }
   }
 

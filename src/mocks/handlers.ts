@@ -140,6 +140,12 @@ export const handlers = [
 
     const data = (await request.json()) as Omit<Forum, "id">
 
+    // Check if slug already exists
+    const existingForum = mockForums.find((f) => f.slug === data.slug)
+    if (existingForum) {
+      return HttpResponse.json({ error: "A forum with this slug already exists" }, { status: 400 })
+    }
+
     // Generate a unique ID
     const newForum: Forum = {
       id: crypto.randomUUID(),
@@ -214,26 +220,44 @@ export const handlers = [
   }),
 
   // Get comments for a post
-  http.get("/api/posts/:postId/comments", ({ params, request }) => {
+  http.get("/api/forums/:slug/posts/:postNumber/comments", ({ params, request }) => {
     const user = validateSession(request)
     if (!user) {
       return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { postId } = params
-    const postComments = mockComments.filter((comment) => comment.postId === postId)
+    const { slug, postNumber } = params
+    const forum = mockForums.find((f) => f.slug === slug)
+
+    if (!forum) {
+      return HttpResponse.json({ error: "Forum not found" }, { status: 404 })
+    }
+
+    const post = mockPosts.find((p) => p.number === Number(postNumber) && p.forumId === forum.id)
+
+    if (!post) {
+      return HttpResponse.json({ error: "Post not found" }, { status: 404 })
+    }
+
+    const postComments = mockComments.filter((comment) => comment.postId === post.id)
     return HttpResponse.json(postComments)
   }),
 
   // Create new comment
-  http.post("/api/posts/:postId/comments", async ({ request, params }) => {
+  http.post("/api/forums/:slug/posts/:postNumber/comments", async ({ request, params }) => {
     const user = validateSession(request)
     if (!user) {
       return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { postId } = params
-    const post = mockPosts.find((p) => p.id === postId)
+    const { slug, postNumber } = params
+    const forum = mockForums.find((f) => f.slug === slug)
+
+    if (!forum) {
+      return HttpResponse.json({ error: "Forum not found" }, { status: 404 })
+    }
+
+    const post = mockPosts.find((p) => p.number === Number(postNumber) && p.forumId === forum.id)
 
     if (!post) {
       return HttpResponse.json({ error: "Post not found" }, { status: 404 })
@@ -243,7 +267,7 @@ export const handlers = [
 
     const newComment: Comment = {
       id: crypto.randomUUID(),
-      postId: postId as string,
+      postId: post.id,
       content: data.content,
       authorId: user.id,
       createdAt: new Date(),

@@ -30,9 +30,9 @@ export default function PostViewPage() {
 
       <PostDetail post={post} />
 
-      <CommentForm postId={post.id} />
+      <CommentForm slug={slug} postNumber={postNumber} />
 
-      <CommentList postId={post.id} />
+      <CommentList slug={slug} postNumber={postNumber} />
     </div>
   )
 }
