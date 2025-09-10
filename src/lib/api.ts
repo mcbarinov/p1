@@ -3,7 +3,6 @@ import ky from "ky"
 import { useNavigate } from "react-router"
 import { toast } from "sonner"
 import type { Forum, Post, User, LoginRequest, LoginResponse, CreateForumData, Comment } from "@/types"
-import type { AuthData } from "./auth-storage"
 import { authStorage } from "./auth-storage"
 
 const httpClient = ky.create({
@@ -92,11 +91,7 @@ export const api = {
       return useMutation({
         mutationFn: (credentials: LoginRequest) => httpClient.post("api/auth/login", { json: credentials }).json<LoginResponse>(),
         onSuccess: (response) => {
-          const authData: AuthData = {
-            user: response.user,
-            authToken: response.authToken,
-          }
-          authStorage.setAuthData(authData)
+          authStorage.setAuthData(response.user, response.authToken)
           queryClient.setQueryData(["currentUser"], response.user)
           toast.success("Logged in successfully")
           void navigate("/")
