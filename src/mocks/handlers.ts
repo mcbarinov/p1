@@ -112,7 +112,9 @@ export const handlers = [
       return HttpResponse.json({ error: "Forum not found" }, { status: 404 })
     }
 
-    const forumPosts = mockPosts.filter((post) => post.forumId === forum.id)
+    const forumPosts = mockPosts
+      .filter((post) => post.forumId === forum.id)
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
     return HttpResponse.json(forumPosts)
   }),
 
