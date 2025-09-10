@@ -96,241 +96,225 @@ const daysAgo = (days: number) => {
 }
 
 // Mock posts database
-export const mockPosts: Post[] = [
-  // Web Development posts
-  {
-    id: generateId("post-1"),
-    forumId: generateId("tech-web"),
-    number: 1,
-    title: "React 19: What's New and Exciting",
-    content:
-      "React 19 brings significant improvements to performance and developer experience. The new compiler optimizations reduce bundle sizes by up to 30%, while the enhanced Suspense boundaries make data fetching more intuitive. Server components are now production-ready, offering seamless integration between client and server code.",
-    tags: ["react", "javascript", "frontend", "web"],
-    authorId: generateId("alice"),
-    createdAt: daysAgo(1),
-    updatedAt: null,
-  },
-  {
-    id: generateId("post-2"),
-    forumId: generateId("tech-web"),
-    number: 2,
-    title: "Tailwind CSS v4: A Game Changer",
-    content:
-      "Tailwind CSS v4 introduces a revolutionary new engine that's 10x faster than v3. The new oxide engine is written in Rust and brings lightning-fast builds. Native CSS cascade layers support means better integration with existing stylesheets. The new variant system is more flexible and powerful than ever.",
-    tags: ["css", "tailwind", "design", "frontend"],
-    authorId: generateId("user1"),
-    createdAt: daysAgo(3),
-    updatedAt: daysAgo(2),
-  },
-  {
-    id: generateId("post-3"),
-    forumId: generateId("tech-web"),
-    number: 3,
-    title: "Building Type-Safe APIs with TypeScript and Zod",
-    content:
-      "Learn how to create fully type-safe APIs using TypeScript and Zod. This approach ensures runtime validation matches compile-time types, eliminating the gap between what TypeScript thinks your data looks like and what it actually is. We'll cover schema definition, validation, and automatic type inference.",
-    tags: ["typescript", "api", "validation", "backend"],
-    authorId: generateId("bob"),
-    createdAt: daysAgo(5),
-    updatedAt: null,
-  },
+export const mockPosts: Post[] = (() => {
+  const webForumId = generateId("tech-web")
+  const users = [generateId("admin"), generateId("user1"), generateId("alice"), generateId("bob")]
 
-  // AI & ML posts
-  {
-    id: generateId("post-4"),
-    forumId: generateId("tech-ai"),
-    number: 1,
-    title: "Understanding Transformer Architecture",
-    content:
-      "Transformers have revolutionized NLP and computer vision. This post breaks down the attention mechanism, positional encoding, and the encoder-decoder structure. We'll implement a simple transformer from scratch to understand how self-attention enables models to capture long-range dependencies in sequences.",
-    tags: ["transformers", "deep-learning", "nlp", "attention"],
-    authorId: generateId("alice"),
-    createdAt: daysAgo(2),
-    updatedAt: null,
-  },
-  {
-    id: generateId("post-5"),
-    forumId: generateId("tech-ai"),
-    number: 2,
-    title: "Fine-tuning LLMs for Domain-Specific Tasks",
-    content:
-      "A practical guide to fine-tuning large language models for specialized domains. We'll explore LoRA, QLoRA, and full fine-tuning approaches. Learn about dataset preparation, hyperparameter tuning, and evaluation metrics. Includes code examples using Hugging Face Transformers and PEFT libraries.",
-    tags: ["llm", "fine-tuning", "nlp", "machine-learning"],
-    authorId: generateId("admin"),
-    createdAt: daysAgo(4),
-    updatedAt: null,
-  },
+  const topics = [
+    {
+      title: "Building a REST API with Node.js",
+      content:
+        "Learn how to create a robust RESTful API using Node.js and Express. We'll cover routing, middleware, error handling, and best practices for structuring your API endpoints. Authentication with JWT tokens and database integration with MongoDB will also be explored.",
+      tags: ["nodejs", "api", "backend", "rest"],
+    },
+    {
+      title: "React Hooks Best Practices",
+      content:
+        "Master the art of using React Hooks effectively. From useState and useEffect to custom hooks, learn patterns that make your components cleaner and more maintainable. We'll explore common pitfalls and how to avoid them in production applications.",
+      tags: ["react", "hooks", "frontend", "javascript"],
+    },
+    {
+      title: "Understanding TypeScript Generics",
+      content:
+        "TypeScript generics provide powerful ways to create reusable components. This guide covers generic functions, interfaces, and classes. Learn how to leverage generics for type-safe code that's flexible and maintainable.",
+      tags: ["typescript", "generics", "types", "javascript"],
+    },
+    {
+      title: "CSS Grid vs Flexbox: When to Use Each",
+      content:
+        "Both CSS Grid and Flexbox are powerful layout tools, but knowing when to use each is crucial. Grid excels at two-dimensional layouts while Flexbox shines in one-dimensional contexts. We'll explore real-world examples and best practices.",
+      tags: ["css", "grid", "flexbox", "layout"],
+    },
+    {
+      title: "Optimizing Web Performance",
+      content:
+        "Web performance directly impacts user experience and SEO. Learn techniques for optimizing load times, including lazy loading, code splitting, image optimization, and caching strategies. We'll measure performance using Core Web Vitals.",
+      tags: ["performance", "optimization", "web", "metrics"],
+    },
+    {
+      title: "Introduction to Docker for Web Developers",
+      content:
+        "Docker simplifies deployment and ensures consistency across environments. This introduction covers containers, images, Dockerfile basics, and Docker Compose for multi-container applications. Perfect for developers new to containerization.",
+      tags: ["docker", "devops", "containers", "deployment"],
+    },
+    {
+      title: "Testing JavaScript with Jest",
+      content:
+        "Comprehensive testing ensures code reliability. Jest provides a complete testing solution with built-in assertions, mocking, and coverage reports. Learn to write unit tests, integration tests, and snapshot tests for your JavaScript applications.",
+      tags: ["testing", "jest", "javascript", "tdd"],
+    },
+    {
+      title: "GraphQL Fundamentals",
+      content:
+        "GraphQL offers a flexible alternative to REST APIs. Learn about schemas, resolvers, queries, and mutations. We'll build a simple GraphQL server and explore how it improves data fetching efficiency in modern applications.",
+      tags: ["graphql", "api", "backend", "query"],
+    },
+    {
+      title: "Modern Authentication Strategies",
+      content:
+        "Security is paramount in web applications. Explore authentication methods including JWT, OAuth 2.0, and session-based auth. Learn about refresh tokens, CSRF protection, and implementing secure authentication flows.",
+      tags: ["authentication", "security", "jwt", "oauth"],
+    },
+    {
+      title: "Database Design Patterns",
+      content:
+        "Good database design is crucial for scalable applications. We'll cover normalization, indexing strategies, and common patterns like soft deletes and audit trails. Examples include both SQL and NoSQL approaches.",
+      tags: ["database", "sql", "design", "patterns"],
+    },
+    {
+      title: "Vue 3 Composition API",
+      content:
+        "Vue 3's Composition API offers a new way to organize component logic. Learn how to use reactive refs, computed properties, and lifecycle hooks in the composition style. We'll refactor components to show the benefits.",
+      tags: ["vue", "composition-api", "frontend", "javascript"],
+    },
+    {
+      title: "Webpack Configuration Deep Dive",
+      content:
+        "Webpack powers many modern build processes. This deep dive covers loaders, plugins, code splitting, and optimization techniques. Learn to configure Webpack for development and production environments.",
+      tags: ["webpack", "bundling", "build", "javascript"],
+    },
+    {
+      title: "Responsive Design Principles",
+      content:
+        "Creating websites that work on all devices is essential. Master responsive design using fluid grids, flexible images, and media queries. We'll explore mobile-first design and modern CSS features like container queries.",
+      tags: ["responsive", "css", "mobile", "design"],
+    },
+    {
+      title: "Server-Side Rendering with Next.js",
+      content:
+        "Next.js makes server-side rendering easy. Learn about static generation, server-side rendering, and incremental static regeneration. We'll build a performant blog that scores perfectly on Core Web Vitals.",
+      tags: ["nextjs", "ssr", "react", "performance"],
+    },
+    {
+      title: "WebSocket Real-Time Communication",
+      content:
+        "WebSockets enable real-time bidirectional communication. Build chat applications, live notifications, and collaborative features. We'll cover Socket.io for easier implementation and scaling considerations.",
+      tags: ["websocket", "realtime", "socketio", "communication"],
+    },
+    {
+      title: "Progressive Web Apps (PWAs)",
+      content:
+        "PWAs combine the best of web and mobile apps. Learn about service workers, web app manifests, and offline functionality. We'll build a PWA that works offline and can be installed like a native app.",
+      tags: ["pwa", "serviceworker", "offline", "mobile"],
+    },
+    {
+      title: "CI/CD Pipeline Setup",
+      content:
+        "Automate your deployment process with CI/CD. We'll set up pipelines using GitHub Actions, including automated testing, building, and deployment. Learn best practices for maintaining reliable deployment workflows.",
+      tags: ["cicd", "automation", "deployment", "devops"],
+    },
+    {
+      title: "Microservices Architecture",
+      content:
+        "Microservices offer scalability and flexibility. Learn about service discovery, API gateways, and inter-service communication. We'll discuss when to use microservices and common pitfalls to avoid.",
+      tags: ["microservices", "architecture", "scalability", "backend"],
+    },
+    {
+      title: "State Management with Redux Toolkit",
+      content:
+        "Redux Toolkit simplifies Redux usage. Learn about slices, thunks, and RTK Query for data fetching. We'll build a complex application state management solution that's maintainable and performant.",
+      tags: ["redux", "state", "react", "toolkit"],
+    },
+    {
+      title: "Web Accessibility (a11y) Guidelines",
+      content:
+        "Building accessible websites is both ethical and often legally required. Learn WCAG guidelines, ARIA attributes, and testing tools. We'll make a website fully accessible while maintaining great design.",
+      tags: ["accessibility", "a11y", "wcag", "inclusive"],
+    },
+    {
+      title: "Kubernetes for Developers",
+      content:
+        "Kubernetes orchestrates containerized applications. Learn about pods, services, deployments, and ingress. We'll deploy a web application to Kubernetes and explore scaling and rolling updates.",
+      tags: ["kubernetes", "k8s", "containers", "orchestration"],
+    },
+    {
+      title: "Svelte: The Compile-Time Framework",
+      content:
+        "Svelte compiles components to vanilla JavaScript. Explore reactive declarations, stores, and animations. We'll build a performant app that ships minimal JavaScript to the browser.",
+      tags: ["svelte", "framework", "frontend", "compiler"],
+    },
+    {
+      title: "API Rate Limiting Strategies",
+      content:
+        "Protect your API from abuse with rate limiting. Learn about token bucket, sliding window, and distributed rate limiting algorithms. Implementation examples using Redis and middleware.",
+      tags: ["api", "ratelimit", "security", "backend"],
+    },
+    {
+      title: "CSS-in-JS Solutions Compared",
+      content:
+        "CSS-in-JS offers component-scoped styling. Compare styled-components, Emotion, and CSS Modules. We'll explore performance implications and when each solution makes sense.",
+      tags: ["css", "styled-components", "emotion", "styling"],
+    },
+    {
+      title: "Error Handling Best Practices",
+      content:
+        "Robust error handling improves user experience. Learn about try-catch patterns, error boundaries in React, and centralized error logging. We'll implement comprehensive error handling strategies.",
+      tags: ["errors", "exception", "debugging", "bestpractices"],
+    },
+    {
+      title: "Web Security Fundamentals",
+      content:
+        "Security vulnerabilities can destroy user trust. Learn about XSS, CSRF, SQL injection, and how to prevent them. We'll implement security headers and Content Security Policy.",
+      tags: ["security", "xss", "csrf", "vulnerabilities"],
+    },
+    {
+      title: "Monorepo Management with Lerna",
+      content:
+        "Monorepos simplify code sharing. Learn to manage multiple packages with Lerna, including versioning, publishing, and dependency management. We'll structure a monorepo for maximum efficiency.",
+      tags: ["monorepo", "lerna", "packages", "management"],
+    },
+    {
+      title: "Browser DevTools Mastery",
+      content:
+        "DevTools are essential for debugging. Master the Network tab, Performance profiler, and Memory analyzer. Learn lesser-known features that speed up development and debugging.",
+      tags: ["devtools", "debugging", "browser", "performance"],
+    },
+    {
+      title: "Jamstack Architecture",
+      content:
+        "Jamstack offers better performance and security. Learn about static site generators, headless CMS options, and serverless functions. We'll build a Jamstack site with dynamic features.",
+      tags: ["jamstack", "static", "serverless", "architecture"],
+    },
+    {
+      title: "WebAssembly Introduction",
+      content:
+        "WebAssembly brings near-native performance to the web. Learn how to compile C++ and Rust to WebAssembly. We'll explore use cases where WebAssembly shines.",
+      tags: ["webassembly", "wasm", "performance", "native"],
+    },
+  ]
 
-  // Mobile Development posts
-  {
-    id: generateId("post-6"),
-    forumId: generateId("tech-mobile"),
-    number: 1,
-    title: "SwiftUI vs UIKit: When to Use Each",
-    content:
-      "While SwiftUI is the future of iOS development, UIKit still has its place. This post examines real-world scenarios where each framework excels. SwiftUI shines in new projects with its declarative syntax and automatic state management. UIKit remains essential for complex custom animations and legacy codebases.",
-    tags: ["ios", "swift", "swiftui", "mobile"],
-    authorId: generateId("bob"),
-    createdAt: daysAgo(7),
-    updatedAt: null,
-  },
-  {
-    id: generateId("post-7"),
-    forumId: generateId("tech-mobile"),
-    number: 2,
-    title: "React Native Performance Optimization Guide",
-    content:
-      "Comprehensive guide to optimizing React Native apps. Cover topics like reducing bridge calls, implementing native modules for performance-critical code, optimizing list rendering with FlashList, and using Hermes engine. Real-world examples show 50%+ performance improvements in production apps.",
-    tags: ["react-native", "mobile", "performance", "optimization"],
-    authorId: generateId("user1"),
-    createdAt: daysAgo(6),
-    updatedAt: null,
-  },
+  const posts: Post[] = []
 
-  // Physics posts
-  {
-    id: generateId("post-8"),
-    forumId: generateId("sci-physics"),
-    number: 1,
-    title: "Quantum Entanglement Explained Simply",
-    content:
-      "Quantum entanglement seems magical but follows strict rules. When particles become entangled, measuring one instantly affects the other regardless of distance. This isn't faster-than-light communication - no information travels. Instead, the particles share a quantum state that collapses upon measurement. Recent experiments have demonstrated entanglement across thousands of kilometers.",
-    tags: ["quantum", "physics", "entanglement", "science"],
-    authorId: generateId("alice"),
-    createdAt: daysAgo(8),
-    updatedAt: null,
-  },
-  {
-    id: generateId("post-9"),
-    forumId: generateId("sci-physics"),
-    number: 2,
-    title: "Dark Matter: What We Know in 2024",
-    content:
-      "Despite making up 85% of matter in the universe, dark matter remains elusive. Recent observations from the James Webb Space Telescope have provided new constraints on dark matter models. We'll explore WIMPs, axions, and primordial black holes as candidates. The latest experiments at CERN and underground detectors continue the search.",
-    tags: ["cosmology", "dark-matter", "astronomy", "physics"],
-    authorId: generateId("admin"),
-    createdAt: daysAgo(10),
-    updatedAt: daysAgo(9),
-  },
+  // Generate 120 posts
+  for (let i = 1; i <= 120; i++) {
+    const topicIndex = (i - 1) % topics.length
+    const topic = topics[topicIndex]
+    const variation = Math.floor((i - 1) / topics.length)
 
-  // Biology posts
-  {
-    id: generateId("post-10"),
-    forumId: generateId("sci-bio"),
-    number: 1,
-    title: "CRISPR Gene Editing: Latest Breakthroughs",
-    content:
-      "CRISPR technology continues to advance rapidly. Prime editing now allows precise insertions, deletions, and replacements without double-strand breaks. Base editors can change single nucleotides with minimal off-target effects. Clinical trials for sickle cell disease and cancer treatments show promising results. The ethical implications remain hotly debated.",
-    tags: ["genetics", "crispr", "biotechnology", "medicine"],
-    authorId: generateId("bob"),
-    createdAt: daysAgo(11),
-    updatedAt: null,
-  },
-  {
-    id: generateId("post-11"),
-    forumId: generateId("sci-bio"),
-    number: 2,
-    title: "The Microbiome's Role in Mental Health",
-    content:
-      "Growing evidence links gut bacteria to brain function through the gut-brain axis. Studies show certain bacterial strains influence neurotransmitter production, affecting mood and cognition. Probiotics and dietary interventions show promise for treating depression and anxiety. The mechanisms involve vagus nerve signaling, metabolite production, and immune modulation.",
-    tags: ["microbiome", "neuroscience", "health", "biology"],
-    authorId: generateId("user1"),
-    createdAt: daysAgo(12),
-    updatedAt: null,
-  },
+    // Add variation to title if we're cycling through topics again
+    const title = variation > 0 ? `${topic.title} - Part ${String(variation + 1)}` : topic.title
 
-  // Chemistry posts
-  {
-    id: generateId("post-12"),
-    forumId: generateId("sci-chem"),
-    number: 1,
-    title: "Green Chemistry: Sustainable Synthesis Methods",
-    content:
-      "Green chemistry principles are transforming industrial processes. Catalytic reactions replace stoichiometric ones, reducing waste. Supercritical CO2 serves as a benign solvent. Enzyme catalysis enables reactions at room temperature. These methods cut energy use and eliminate toxic reagents while maintaining or improving yields.",
-    tags: ["green-chemistry", "sustainability", "catalysis", "environment"],
-    authorId: generateId("alice"),
-    createdAt: daysAgo(14),
-    updatedAt: null,
-  },
+    // Add variation to content
+    const content =
+      variation > 0
+        ? `${topic.content} In this part ${String(variation + 1)}, we dive deeper into advanced concepts and real-world applications.`
+        : topic.content
 
-  // Digital Art posts
-  {
-    id: generateId("post-13"),
-    forumId: generateId("art-digital"),
-    number: 1,
-    title: "AI Art Tools: Creativity or Controversy?",
-    content:
-      "AI art generators like Midjourney and DALL-E spark heated debate. Artists worry about job displacement and copyright issues. Others see AI as a powerful creative tool. The technology democratizes art creation but raises questions about authenticity and originality. How do we balance innovation with protecting artists' livelihoods?",
-    tags: ["ai-art", "digital", "ethics", "creativity"],
-    authorId: generateId("admin"),
-    createdAt: daysAgo(15),
-    updatedAt: null,
-  },
-  {
-    id: generateId("post-14"),
-    forumId: generateId("art-digital"),
-    number: 2,
-    title: "Blender 4.0: Professional 3D for Everyone",
-    content:
-      "Blender 4.0 cements its position as industry-standard software. The Principled BSDF v2 brings physically accurate materials. Geometry nodes enable procedural modeling rivaling Houdini. Real-time ray tracing in the viewport speeds up workflows. Best of all, it remains completely free and open-source.",
-    tags: ["blender", "3d", "modeling", "animation"],
-    authorId: generateId("bob"),
-    createdAt: daysAgo(13),
-    updatedAt: null,
-  },
+    posts.push({
+      id: generateId(`post-${String(i)}`),
+      forumId: webForumId,
+      number: i,
+      title: title,
+      content: content,
+      tags: topic.tags,
+      authorId: users[i % users.length],
+      createdAt: daysAgo(60 - Math.floor(i / 2)),
+      updatedAt: Math.random() > 0.7 ? daysAgo(60 - Math.floor(i / 2) - 1) : null,
+    })
+  }
 
-  // Traditional Art posts
-  {
-    id: generateId("post-15"),
-    forumId: generateId("art-trad"),
-    number: 1,
-    title: "Oil Painting Techniques: Alla Prima vs Glazing",
-    content:
-      "Two fundamental oil painting approaches offer different advantages. Alla prima (wet-on-wet) creates spontaneous, energetic works in single sessions. Glazing builds luminous depth through transparent layers over weeks. Masters like Rembrandt combined both techniques. Modern artists often choose based on subject matter and desired mood.",
-    tags: ["oil-painting", "techniques", "traditional", "fine-art"],
-    authorId: generateId("user1"),
-    createdAt: daysAgo(16),
-    updatedAt: null,
-  },
-  {
-    id: generateId("post-16"),
-    forumId: generateId("art-trad"),
-    number: 2,
-    title: "Watercolor: Mastering the Unpredictable Medium",
-    content:
-      "Watercolor's transparency and fluidity make it uniquely challenging. Success requires understanding water-to-pigment ratios, paper characteristics, and timing. Techniques like wet-on-wet create soft blends while dry brush adds texture. The key is embracing happy accidents and working with the medium's spontaneous nature rather than fighting it.",
-    tags: ["watercolor", "painting", "techniques", "tutorial"],
-    authorId: generateId("alice"),
-    createdAt: daysAgo(17),
-    updatedAt: null,
-  },
-
-  // Photography posts
-  {
-    id: generateId("post-17"),
-    forumId: generateId("art-photo"),
-    number: 1,
-    title: "Street Photography: Ethics and Techniques",
-    content:
-      "Street photography captures authentic human moments but raises privacy concerns. Legal rights vary by country - know your local laws. Techniques include zone focusing for quick shots, using reflections for creative compositions, and developing situational awareness. Most importantly, respect your subjects and consider the stories you're telling.",
-    tags: ["street", "photography", "ethics", "documentary"],
-    authorId: generateId("admin"),
-    createdAt: daysAgo(18),
-    updatedAt: null,
-  },
-  {
-    id: generateId("post-18"),
-    forumId: generateId("art-photo"),
-    number: 2,
-    title: "Astrophotography on a Budget",
-    content:
-      "Stunning night sky photos don't require expensive equipment. A basic DSLR, tripod, and wide lens can capture the Milky Way. Key settings: manual mode, 20-second exposure, f/2.8, ISO 3200. Use the 500 rule to avoid star trails. Free software like DeepSkyStacker helps combine multiple exposures for noise reduction.",
-    tags: ["astrophotography", "night", "budget", "tutorial"],
-    authorId: generateId("bob"),
-    createdAt: daysAgo(20),
-    updatedAt: daysAgo(19),
-  },
-]
+  return posts
+})()
 
 // Mock comments database
 export const mockComments: Comment[] = [
