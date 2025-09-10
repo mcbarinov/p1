@@ -1,8 +1,27 @@
 import type { Forum, Post, User, Comment } from "@/types"
 
 const generateId = (seed: string) => {
-  const hash = seed.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
-  const uuid = `${hash.toString(16).padStart(8, "0")}-${hash.toString(16).padStart(4, "0")}-4${hash.toString(16).padStart(3, "0")}-${((hash & 0x3f) | 0x80).toString(16).padStart(4, "0")}-${hash.toString(16).padStart(12, "0")}`
+  // Use a better hash function to avoid collisions
+  let hash = 0
+  let hash2 = 0
+  for (let i = 0; i < seed.length; i++) {
+    const char = seed.charCodeAt(i)
+    hash = ((hash << 5) - hash + char) | 0 // hash * 31 + char
+    hash2 = ((hash2 << 3) + hash2 + char) | 0 // hash2 * 9 + char
+  }
+
+  // Make both hashes positive
+  hash = Math.abs(hash)
+  hash2 = Math.abs(hash2)
+
+  // Create a UUID-like format using both hashes for better distribution
+  const part1 = hash.toString(16).padStart(8, "0").slice(-8)
+  const part2 = hash2.toString(16).padStart(4, "0").slice(-4)
+  const part3 = "4" + (hash ^ hash2).toString(16).padStart(3, "0").slice(-3)
+  const part4 = (((hash2 & 0x3f) | 0x80).toString(16).padStart(2, "0") + (hash & 0xff).toString(16).padStart(2, "0")).slice(-4)
+  const part5 = (hash * hash2).toString(16).padStart(12, "0").slice(-12)
+
+  const uuid = `${part1}-${part2}-${part3}-${part4}-${part5}`
   return uuid
 }
 
