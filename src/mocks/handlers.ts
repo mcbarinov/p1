@@ -239,7 +239,9 @@ export const handlers = [
       return HttpResponse.json({ error: "Post not found" }, { status: 404 })
     }
 
-    const postComments = mockComments.filter((comment) => comment.postId === post.id)
+    const postComments = mockComments
+      .filter((comment) => comment.postId === post.id)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     return HttpResponse.json(postComments)
   }),
 
