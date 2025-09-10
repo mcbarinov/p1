@@ -2,11 +2,10 @@ import { useUser } from "@/hooks/useCache"
 
 interface UsernameProps {
   id: string
-  fallback?: string
   className?: string
 }
 
-export function Username({ id, fallback = "Unknown", className }: UsernameProps) {
+export function Username({ id, className }: UsernameProps) {
   const user = useUser(id)
-  return <span className={className}>{user?.username ?? fallback}</span>
+  return <span className={className}>{user.username}</span>
 }

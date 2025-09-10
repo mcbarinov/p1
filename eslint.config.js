@@ -16,7 +16,7 @@ export default defineConfig([
     files: ["**/*.{ts,tsx}"],
     extends: [
       js.configs.recommended,
-      ...tseslint.configs.recommendedTypeChecked,
+      ...tseslint.configs.strictTypeChecked,
       ...tseslint.configs.stylisticTypeChecked,
       ...pluginQuery.configs["flat/recommended"],
       reactX.configs["recommended-typescript"],
@@ -38,6 +38,9 @@ export default defineConfig([
     files: ["**/components/ui/**/*.{ts,tsx}"],
     rules: {
       "@typescript-eslint/consistent-type-definitions": "off",
+      "@typescript-eslint/no-unnecessary-condition": "off",
+      "@typescript-eslint/no-unnecessary-template-expression": "off",
+      "@typescript-eslint/no-unnecessary-type-conversion": "off",
       "react-refresh/only-export-components": "off",
       "react-x/no-context-provider": "off",
       "react-x/no-use-context": "off",

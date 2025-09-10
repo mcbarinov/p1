@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router"
 import { useSuspenseQuery } from "@tanstack/react-query"
-import { postQueryOptions } from "@/lib/queries"
+import { api } from "@/lib/api"
 import { useForum } from "@/hooks/useCache"
 import { ArrowLeft } from "lucide-react"
 import { PostDetail } from "./-components/PostDetail"
@@ -11,15 +11,7 @@ export default function PostViewPage() {
   const { slug, postNumber } = useParams() as { slug: string; postNumber: string }
 
   const forum = useForum(slug)
-  const { data: post } = useSuspenseQuery(postQueryOptions(slug, postNumber))
-
-  if (!forum) {
-    return (
-      <div className="container mx-auto p-6">
-        <div className="text-center py-8 text-red-500">Forum not found</div>
-      </div>
-    )
-  }
+  const { data: post } = useSuspenseQuery(api.queries.post(slug, postNumber))
 
   return (
     <div className="container mx-auto p-6 space-y-6">

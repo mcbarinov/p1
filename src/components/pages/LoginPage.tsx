@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Navigate } from "react-router"
 import { useQuery } from "@tanstack/react-query"
-import { authQueryOptions, useLoginMutation } from "@/lib/queries"
+import { api } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
@@ -18,12 +18,12 @@ const formSchema = z.object({
 type LoginForm = z.infer<typeof formSchema>
 
 export default function Login() {
-  const { data: authData } = useQuery(authQueryOptions())
-  const loginMutation = useLoginMutation()
+  const { data: currentUser } = useQuery(api.queries.currentUser())
+  const loginMutation = api.mutations.useLogin()
 
   const form = useForm<LoginForm>({ resolver: zodResolver(formSchema), defaultValues: { username: "", password: "" } })
 
-  if (authData?.user) {
+  if (currentUser) {
     return <Navigate to="/" replace />
   }
 

@@ -2,7 +2,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useNavigate, useParams } from "react-router"
-import { useCreatePostMutation } from "@/lib/queries"
+import { api } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -20,7 +20,7 @@ type NewPostForm = z.infer<typeof formSchema>
 export default function PostCreatePage() {
   const navigate = useNavigate()
   const { slug } = useParams() as { slug: string }
-  const createPostMutation = useCreatePostMutation()
+  const createPostMutation = api.mutations.useCreatePost()
 
   const form = useForm<NewPostForm>({
     resolver: zodResolver(formSchema),
@@ -43,7 +43,7 @@ export default function PostCreatePage() {
         tags,
         forumSlug: slug,
       })
-      void navigate(`/forums/${slug}/${newPost.number}`)
+      void navigate(`/forums/${slug}/${String(newPost.number)}`)
     } catch {
       form.setError("root", { message: "Failed to create post" })
     }

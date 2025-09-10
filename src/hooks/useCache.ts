@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
-import { forumsQueryOptions, usersQueryOptions } from "@/lib/queries"
+import { api } from "@/lib/api"
 import { NotFoundError } from "@/lib/errors"
 import type { User, Forum } from "@/types"
 
@@ -8,7 +8,7 @@ import type { User, Forum } from "@/types"
  * Users are loaded once on app start and cached indefinitely
  */
 export function useUsers() {
-  const { data: users } = useSuspenseQuery(usersQueryOptions())
+  const { data: users } = useSuspenseQuery(api.queries.users())
   return users
 }
 
@@ -29,7 +29,7 @@ export function useUser(userId: string): User {
  * Forums are loaded once on app start and cached indefinitely
  */
 export function useForums() {
-  const { data: forums } = useSuspenseQuery(forumsQueryOptions())
+  const { data: forums } = useSuspenseQuery(api.queries.forums())
   return forums
 }
 

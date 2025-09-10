@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useSuspenseQuery } from "@tanstack/react-query"
-import { authQueryOptions, useCreateCommentMutation } from "@/lib/queries"
+import { api } from "@/lib/api"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -13,8 +13,8 @@ interface CommentFormProps {
 
 export function CommentForm({ slug, postNumber }: CommentFormProps) {
   const [content, setContent] = useState("")
-  const { data: authData } = useSuspenseQuery(authQueryOptions())
-  const createComment = useCreateCommentMutation()
+  const { data: currentUser } = useSuspenseQuery(api.queries.currentUser())
+  const createComment = api.mutations.useCreateComment()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,7 +31,7 @@ export function CommentForm({ slug, postNumber }: CommentFormProps) {
     )
   }
 
-  if (!authData?.user) {
+  if (!currentUser) {
     return (
       <Card>
         <CardHeader>
@@ -54,7 +54,9 @@ export function CommentForm({ slug, postNumber }: CommentFormProps) {
           <Textarea
             placeholder="Share your thoughts..."
             value={content}
-            onChange={(e) => setContent(e.target.value)}
+            onChange={(e) => {
+              setContent(e.target.value)
+            }}
             rows={3}
             disabled={createComment.isPending}
           />

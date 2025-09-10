@@ -3,14 +3,14 @@ import { Navigate, Outlet, useLocation } from "react-router"
 import Footer from "./-components/Footer"
 import Header from "./-components/Header"
 import { useQuery } from "@tanstack/react-query"
-import { authQueryOptions } from "@/lib/queries"
+import { api } from "@/lib/api"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 export default function Layout() {
   const location = useLocation()
-  const { data: authData } = useQuery(authQueryOptions())
+  const { data: currentUser } = useQuery(api.queries.currentUser())
 
-  if (!authData?.user) {
+  if (!currentUser) {
     return <Navigate to="/login" replace />
   }
   return (

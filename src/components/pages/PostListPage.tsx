@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router"
 import { useSuspenseQuery } from "@tanstack/react-query"
-import { postsQueryOptions } from "@/lib/queries"
+import { api } from "@/lib/api"
 import { useForum } from "@/hooks/useCache"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
@@ -15,15 +15,7 @@ export default function ListPosts() {
   const forum = useForum(slug)
 
   // Only posts need to be fetched per forum
-  const { data: posts } = useSuspenseQuery(postsQueryOptions(slug))
-
-  if (!forum) {
-    return (
-      <div className="container mx-auto p-6">
-        <div className="text-center py-8 text-red-500">Forum not found</div>
-      </div>
-    )
-  }
+  const { data: posts } = useSuspenseQuery(api.queries.posts(slug))
 
   return (
     <div className="container mx-auto p-6">
@@ -50,7 +42,7 @@ export default function ListPosts() {
             <TableRow
               key={post.id}
               className="cursor-pointer hover:bg-muted/50"
-              onClick={() => void navigate(`/forums/${slug}/${post.number}`)}
+              onClick={() => void navigate(`/forums/${slug}/${String(post.number)}`)}
             >
               <TableCell>{formatDate(post.createdAt)}</TableCell>
               <TableCell>

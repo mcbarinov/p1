@@ -2,19 +2,16 @@ import type { Forum } from "@/types"
 import { Link } from "react-router"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useSuspenseQuery } from "@tanstack/react-query"
-import { forumsQueryOptions } from "@/lib/queries"
+import { api } from "@/lib/api"
 
 export default function Home() {
-  const { data: forums } = useSuspenseQuery(forumsQueryOptions())
+  const { data: forums } = useSuspenseQuery(api.queries.forums())
 
-  const groupedForums = forums.reduce(
-    (acc, forum) => {
-      acc[forum.category] ??= []
-      acc[forum.category].push(forum)
-      return acc
-    },
-    {} as Record<string, Forum[]>
-  )
+  const groupedForums = forums.reduce<Record<string, Forum[]>>((acc, forum) => {
+    acc[forum.category] ??= []
+    acc[forum.category].push(forum)
+    return acc
+  }, {})
 
   return (
     <div className="container mx-auto py-8">

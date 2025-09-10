@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import "./index.css"
 import { RouterProvider } from "react-router"
 import { createRouter } from "./router"
-import { forumsQueryOptions, usersQueryOptions } from "./lib/queries"
+import { api } from "./lib/api"
 import { authStorage } from "./lib/auth-storage"
 
 async function startApp() {
@@ -24,14 +24,14 @@ async function startApp() {
   const queryClient = new QueryClient()
 
   // Initialize auth from localStorage
-  const authData = authStorage.getAuthData()
-  if (authData) {
-    queryClient.setQueryData(["currentUser"], authData)
+  const currentUser = authStorage.getCurrentUser()
+  if (currentUser) {
+    queryClient.setQueryData(["currentUser"], currentUser)
 
     // Prefetch critical data only if authenticated
     // This ensures users and forums are loaded once at app start
     try {
-      await Promise.all([queryClient.prefetchQuery(forumsQueryOptions()), queryClient.prefetchQuery(usersQueryOptions())])
+      await Promise.all([queryClient.prefetchQuery(api.queries.forums()), queryClient.prefetchQuery(api.queries.users())])
     } catch (error) {
       // If prefetch fails (likely 401), the afterResponse hook will handle redirect
       console.error("Failed to prefetch data:", error)
@@ -39,7 +39,10 @@ async function startApp() {
   }
 
   // Render the app after MSW is ready
-  createRoot(document.getElementById("root")!).render(
+  const rootElement = document.getElementById("root")
+  if (!rootElement) throw new Error("Root element not found")
+
+  createRoot(rootElement).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />

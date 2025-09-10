@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
-import { commentsQueryOptions } from "@/lib/queries"
+import { api } from "@/lib/api"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CommentItem } from "./CommentItem"
 
@@ -9,7 +9,7 @@ interface CommentListProps {
 }
 
 export function CommentList({ slug, postNumber }: CommentListProps) {
-  const { data: comments } = useSuspenseQuery(commentsQueryOptions(slug, postNumber))
+  const { data: comments } = useSuspenseQuery(api.queries.comments(slug, postNumber))
 
   if (comments.length === 0) {
     return (
