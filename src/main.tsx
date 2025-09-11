@@ -21,7 +21,16 @@ async function startApp() {
 
   // Create router after MSW is ready
   const router = createRouter()
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+      mutations: {
+        retry: false,
+      },
+    },
+  })
 
   // Initialize auth from localStorage
   const currentUser = authStorage.getCurrentUser()

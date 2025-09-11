@@ -8,10 +8,10 @@ import { Username } from "@/components/shared/Username"
 import { formatDate } from "@/lib/formatters"
 import { Paginator } from "./-components/Paginator"
 
-export default function ListPosts() {
+export default function PostListPage() {
   const { slug } = useParams() as { slug: string }
   const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
 
   const currentPage = Number(searchParams.get("page") ?? "1")
   const pageSize = Number(searchParams.get("pageSize") ?? "10")
@@ -22,14 +22,6 @@ export default function ListPosts() {
   // Fetch paginated posts
   const { data: paginatedData } = useSuspenseQuery(api.queries.posts(slug, currentPage, pageSize))
   const { items: posts, totalPages } = paginatedData
-
-  const handlePageChange = (page: number) => {
-    setSearchParams({ page: String(page), pageSize: String(pageSize) })
-  }
-
-  const handlePageSizeChange = (newPageSize: string) => {
-    setSearchParams({ page: "1", pageSize: newPageSize })
-  }
 
   return (
     <div className="container mx-auto p-6">
@@ -52,30 +44,31 @@ export default function ListPosts() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {posts.map((post) => (
-            <TableRow
-              key={post.id}
-              className="cursor-pointer hover:bg-muted/50"
-              onClick={() => void navigate(`/forums/${slug}/${String(post.number)}`)}
-            >
-              <TableCell>{formatDate(post.createdAt)}</TableCell>
-              <TableCell>
-                <Username id={post.authorId} />
+          {posts.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
+                No posts yet. Be the first to create one!
               </TableCell>
-              <TableCell>{post.title}</TableCell>
             </TableRow>
-          ))}
+          ) : (
+            posts.map((post) => (
+              <TableRow
+                key={post.id}
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => navigate(`/forums/${slug}/${String(post.number)}`)}
+              >
+                <TableCell>{formatDate(post.createdAt)}</TableCell>
+                <TableCell>
+                  <Username id={post.authorId} />
+                </TableCell>
+                <TableCell>{post.title}</TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
 
-      <Paginator
-        currentPage={currentPage}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        totalCount={paginatedData.totalCount}
-        onPageChange={handlePageChange}
-        onPageSizeChange={handlePageSizeChange}
-      />
+      <Paginator currentPage={currentPage} totalPages={totalPages} pageSize={pageSize} totalCount={paginatedData.totalCount} />
     </div>
   )
 }

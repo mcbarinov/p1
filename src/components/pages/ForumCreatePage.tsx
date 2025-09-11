@@ -58,7 +58,7 @@ export default function NewForum() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={(e) => void form.handleSubmit(onSubmit)(e)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
                 name="title"

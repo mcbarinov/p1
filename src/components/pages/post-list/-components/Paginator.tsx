@@ -1,3 +1,4 @@
+import { useSearchParams } from "react-router"
 import {
   Pagination,
   PaginationContent,
@@ -14,13 +15,22 @@ interface PaginatorProps {
   totalPages: number
   pageSize: number
   totalCount: number
-  onPageChange: (page: number) => void
-  onPageSizeChange: (pageSize: string) => void
 }
 
-export function Paginator({ currentPage, totalPages, pageSize, totalCount, onPageChange, onPageSizeChange }: PaginatorProps) {
+export function Paginator({ currentPage, totalPages, pageSize, totalCount }: PaginatorProps) {
+  const [, setSearchParams] = useSearchParams()
+
   if (totalPages <= 1) {
     return null
+  }
+
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return
+    setSearchParams({ page: String(page), pageSize: String(pageSize) })
+  }
+
+  const handlePageSizeChange = (newPageSize: string) => {
+    setSearchParams({ page: "1", pageSize: newPageSize })
   }
 
   const startItem = (currentPage - 1) * pageSize + 1
@@ -44,7 +54,7 @@ export function Paginator({ currentPage, totalPages, pageSize, totalCount, onPag
           <PaginationItem key={pageNumber}>
             <PaginationLink
               onClick={() => {
-                onPageChange(pageNumber)
+                handlePageChange(pageNumber)
               }}
               isActive={currentPage === pageNumber}
               className="cursor-pointer"
@@ -68,7 +78,7 @@ export function Paginator({ currentPage, totalPages, pageSize, totalCount, onPag
           <PaginationItem key={pageNumber}>
             <PaginationLink
               onClick={() => {
-                onPageChange(pageNumber)
+                handlePageChange(pageNumber)
               }}
               isActive={currentPage === pageNumber}
               className="cursor-pointer"
@@ -88,7 +98,7 @@ export function Paginator({ currentPage, totalPages, pageSize, totalCount, onPag
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">Show</span>
-          <Select value={String(pageSize)} onValueChange={onPageSizeChange}>
+          <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
             <SelectTrigger className="h-8 w-[70px]">
               <SelectValue />
             </SelectTrigger>
@@ -113,7 +123,7 @@ export function Paginator({ currentPage, totalPages, pageSize, totalCount, onPag
             <PaginationItem>
               <PaginationPrevious
                 onClick={() => {
-                  onPageChange(currentPage - 1)
+                  handlePageChange(currentPage - 1)
                 }}
                 className={currentPage <= 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
               />
@@ -124,7 +134,7 @@ export function Paginator({ currentPage, totalPages, pageSize, totalCount, onPag
             <PaginationItem>
               <PaginationNext
                 onClick={() => {
-                  onPageChange(currentPage + 1)
+                  handlePageChange(currentPage + 1)
                 }}
                 className={currentPage >= totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
               />
