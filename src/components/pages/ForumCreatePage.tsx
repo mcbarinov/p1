@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
 import { AppError } from "@/lib/errors"
 
@@ -24,7 +25,7 @@ const formSchema = z.object({
 
 type NewForumForm = z.infer<typeof formSchema>
 
-export default function NewForum() {
+export default function ForumCreatePage() {
   const navigate = useNavigate()
   const createForumMutation = api.mutations.useCreateForum()
 
@@ -104,16 +105,18 @@ export default function NewForum() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Category</FormLabel>
-                    <FormControl>
-                      <select
-                        {...field}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="Technology">Technology</option>
-                        <option value="Science">Science</option>
-                        <option value="Art">Art</option>
-                      </select>
-                    </FormControl>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Technology">Technology</SelectItem>
+                        <SelectItem value="Science">Science</SelectItem>
+                        <SelectItem value="Art">Art</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

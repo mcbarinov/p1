@@ -1,8 +1,8 @@
 import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query"
 import ky from "ky"
-import { AppError } from "./errors"
+import { AppError } from "@/lib/errors"
 import type { Forum, Post, User, LoginRequest, LoginResponse, CreateForumData, Comment, PaginatedResponse } from "@/types"
-import { authStorage } from "./auth-storage"
+import { authStorage } from "@/lib/auth-storage"
 
 const httpClient = ky.create({
   prefixUrl: "/",

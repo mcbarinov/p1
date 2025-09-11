@@ -18,7 +18,7 @@ const formSchema = z.object({
 
 type LoginForm = z.infer<typeof formSchema>
 
-export default function Login() {
+export default function LoginPage() {
   const { data: currentUser } = useQuery(api.queries.currentUser())
   const navigate = useNavigate()
   const loginMutation = api.mutations.useLogin()

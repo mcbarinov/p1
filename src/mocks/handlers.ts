@@ -1,6 +1,6 @@
 import type { LoginRequest, LoginResponse, Forum, Post, User, Comment } from "@/types"
 import { http, HttpResponse } from "msw"
-import { mockForums, mockPosts, mockUsers, mockComments, mockSessions } from "./data"
+import { mockForums, mockPosts, mockUsers, mockComments, mockSessions } from "@/mocks/data"
 
 // Helper function to validate session and get current user
 function validateSession(request: Request): User | null {
