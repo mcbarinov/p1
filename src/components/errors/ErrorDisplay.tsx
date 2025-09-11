@@ -1,34 +1,24 @@
-import { useEffect, useState } from "react"
 import { AlertCircle, AlertTriangle, WifiOff, XCircle } from "lucide-react"
-import { parseError, getErrorTitle, ErrorGroup, type AppError } from "@/lib/errors"
+import { AppError } from "@/lib/errors"
 
 interface ErrorDisplayProps {
   error: unknown
 }
 
 export function ErrorDisplay({ error }: ErrorDisplayProps) {
-  const [appError, setAppError] = useState<AppError | null>(null)
-
-  useEffect(() => {
-    void parseError(error).then(setAppError)
-  }, [error])
-
-  if (!appError) {
-    return null
-  }
-
-  const title = getErrorTitle(appError.group)
+  const appError = AppError.fromUnknown(error)
+  const title = appError.title
 
   const getIcon = () => {
-    switch (appError.group) {
-      case ErrorGroup.NETWORK_ERROR:
+    switch (appError.code) {
+      case "network_error":
         return <WifiOff className="h-12 w-12 text-muted-foreground" />
-      case ErrorGroup.SERVER_ERROR:
+      case "server_error":
         return <AlertTriangle className="h-12 w-12 text-destructive" />
-      case ErrorGroup.NOT_FOUND:
+      case "not_found":
         return <XCircle className="h-12 w-12 text-muted-foreground" />
-      case ErrorGroup.UNAUTHORIZED:
-      case ErrorGroup.FORBIDDEN:
+      case "unauthorized":
+      case "forbidden":
         return <AlertCircle className="h-12 w-12 text-warning" />
       default:
         return <AlertCircle className="h-12 w-12 text-muted-foreground" />

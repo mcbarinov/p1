@@ -1,5 +1,6 @@
 import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query"
 import ky from "ky"
+import { AppError } from "./errors"
 import { useNavigate } from "react-router"
 import { toast } from "sonner"
 import type { Forum, Post, User, LoginRequest, LoginResponse, CreateForumData, Comment, PaginatedResponse } from "@/types"
@@ -17,15 +18,34 @@ const httpClient = ky.create({
       },
     ],
     afterResponse: [
-      (_request, _options, response) => {
+      async (_request, _options, response) => {
+        // Handle 401 redirect early
         if (response.status === 401) {
           const isLoginPage = window.location.pathname === "/login"
-
           if (!isLoginPage) {
             authStorage.clearAuthData()
             window.location.href = "/login"
           }
         }
+
+        if (!response.ok) {
+          // Shape non-OK responses into AppError with best-effort message extraction
+          const code = AppError.codeFromStatus(response.status)
+          let message = `HTTP ${String(response.status)} ${response.statusText}`
+          try {
+            const contentType = response.headers.get("content-type")
+            if (contentType?.includes("application/json")) {
+              const data = (await response.clone().json()) as Record<string, unknown>
+              if (typeof data.error === "string" && data.error.trim() !== "") {
+                message = data.error
+              }
+            }
+          } catch {
+            // Ignore parsing errors and use fallback message
+          }
+          throw new AppError(code, message)
+        }
+
         return response
       },
     ],
@@ -101,6 +121,10 @@ export const api = {
           toast.success("Logged in successfully")
           void navigate("/")
         },
+        onError: (error) => {
+          const app = AppError.fromUnknown(error)
+          toast.error(app.message)
+        },
       })
     },
 
@@ -117,8 +141,8 @@ export const api = {
           void navigate("/login")
         },
         onError: (error) => {
-          console.error("Logout failed:", error)
-          toast.error("Failed to logout. Please try again.")
+          const app = AppError.fromUnknown(error)
+          toast.error(app.message)
         },
       })
     },
@@ -133,9 +157,8 @@ export const api = {
           toast.success(`Forum "${newForum.title}" created successfully!`)
         },
         onError: (error) => {
-          console.error("Failed to create forum:", error)
-          const message = error instanceof Error ? error.message : "Failed to create forum. Please try again."
-          toast.error(message)
+          const app = AppError.fromUnknown(error)
+          toast.error(app.message)
         },
       })
     },
@@ -151,8 +174,8 @@ export const api = {
           toast.success("Post created successfully!")
         },
         onError: (error) => {
-          console.error("Failed to create post:", error)
-          toast.error("Failed to create post. Please try again.")
+          const app = AppError.fromUnknown(error)
+          toast.error(app.message)
         },
       })
     },
@@ -168,8 +191,8 @@ export const api = {
           toast.success("Comment added successfully!")
         },
         onError: (error) => {
-          console.error("Failed to create comment:", error)
-          toast.error("Failed to add comment. Please try again.")
+          const app = AppError.fromUnknown(error)
+          toast.error(app.message)
         },
       })
     },

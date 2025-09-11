@@ -1,104 +1,81 @@
 import { HTTPError } from "ky"
 
-export const ErrorGroup = {
-  BAD_REQUEST: "bad_request",
-  UNAUTHORIZED: "unauthorized",
-  FORBIDDEN: "forbidden",
-  NOT_FOUND: "not_found",
-  VALIDATION: "validation",
-  SERVER_ERROR: "server_error",
-  NETWORK_ERROR: "network_error",
-  UNKNOWN: "unknown",
-} as const
-
-export type ErrorGroup = (typeof ErrorGroup)[keyof typeof ErrorGroup]
+export type ErrorCode =
+  | "bad_request"
+  | "unauthorized"
+  | "forbidden"
+  | "not_found"
+  | "validation"
+  | "server_error"
+  | "network_error"
+  | "unknown"
 
 export class AppError extends Error {
-  readonly group: ErrorGroup
+  readonly code: ErrorCode
 
-  constructor(group: ErrorGroup, message: string) {
+  constructor(code: ErrorCode, message: string) {
     super(message)
     this.name = "AppError"
-    this.group = group
+    this.code = code
   }
-}
 
-function getErrorGroup(statusCode: number): ErrorGroup {
-  switch (statusCode) {
-    case 400:
-      return ErrorGroup.BAD_REQUEST
-    case 401:
-      return ErrorGroup.UNAUTHORIZED
-    case 403:
-      return ErrorGroup.FORBIDDEN
-    case 404:
-      return ErrorGroup.NOT_FOUND
-    case 422:
-      return ErrorGroup.VALIDATION
-    default:
-      if (statusCode >= 500) {
-        return ErrorGroup.SERVER_ERROR
-      }
-      return ErrorGroup.UNKNOWN
-  }
-}
+  // ---------- Static helpers ----------
 
-export async function parseHttpError(error: HTTPError): Promise<AppError> {
-  const group = getErrorGroup(error.response.status)
-  let message = `HTTP ${String(error.response.status)} ${error.response.statusText}`
-
-  try {
-    const contentType = error.response.headers.get("content-type")
-    if (contentType?.includes("application/json")) {
-      const data = (await error.response.clone().json()) as Record<string, unknown>
-      if (typeof data.error === "string") {
-        message = data.error
-      }
+  static codeFromStatus(statusCode: number): ErrorCode {
+    switch (statusCode) {
+      case 400:
+        return "bad_request"
+      case 401:
+        return "unauthorized"
+      case 403:
+        return "forbidden"
+      case 404:
+        return "not_found"
+      case 422:
+        return "validation"
+      default:
+        if (statusCode >= 500) {
+          return "server_error"
+        }
+        return "unknown"
     }
-  } catch {
-    // Use default message
   }
 
-  return new AppError(group, message)
-}
-
-export async function parseError(error: unknown): Promise<AppError> {
-  if (error instanceof AppError) {
-    return error
+  static fromUnknown(error: unknown): AppError {
+    if (error instanceof AppError) {
+      return error
+    }
+    if (error instanceof HTTPError) {
+      const code = AppError.codeFromStatus(error.response.status)
+      const defaultMessage = `HTTP ${String(error.response.status)} ${error.response.statusText}`
+      return new AppError(code, defaultMessage)
+    }
+    if (error instanceof TypeError && error.message.includes("fetch")) {
+      return new AppError("network_error", "Network connection failed")
+    }
+    if (error instanceof Error) {
+      return new AppError("unknown", error.message)
+    }
+    return new AppError("unknown", "An unexpected error occurred")
   }
 
-  if (error instanceof HTTPError) {
-    return parseHttpError(error)
-  }
-
-  if (error instanceof TypeError && error.message.includes("fetch")) {
-    return new AppError(ErrorGroup.NETWORK_ERROR, "Network connection failed")
-  }
-
-  if (error instanceof Error) {
-    return new AppError(ErrorGroup.UNKNOWN, error.message)
-  }
-
-  return new AppError(ErrorGroup.UNKNOWN, "An unexpected error occurred")
-}
-
-export function getErrorTitle(group: ErrorGroup): string {
-  switch (group) {
-    case ErrorGroup.BAD_REQUEST:
-      return "Invalid Request"
-    case ErrorGroup.UNAUTHORIZED:
-      return "Authentication Required"
-    case ErrorGroup.FORBIDDEN:
-      return "Access Denied"
-    case ErrorGroup.NOT_FOUND:
-      return "Not Found"
-    case ErrorGroup.VALIDATION:
-      return "Validation Error"
-    case ErrorGroup.SERVER_ERROR:
-      return "Server Error"
-    case ErrorGroup.NETWORK_ERROR:
-      return "Network Error"
-    default:
-      return "Error"
+  // ---------- Instance helpers ----------
+  get title(): string {
+    return errorTitleByCode[this.code]
   }
 }
+
+// Note: legacy async parseError has been removed in favor of AppError.fromUnknown
+
+export const errorTitleByCode: Record<ErrorCode, string> = {
+  bad_request: "Invalid Request",
+  unauthorized: "Authentication Required",
+  forbidden: "Access Denied",
+  not_found: "Not Found",
+  validation: "Validation Error",
+  server_error: "Server Error",
+  network_error: "Network Error",
+  unknown: "Error",
+}
+
+// Prefer AppError.title instance getter instead of getErrorTitle()
