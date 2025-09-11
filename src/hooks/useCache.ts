@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { api } from "@/lib/api"
-import { NotFoundError } from "@/lib/errors"
+import { AppError, ErrorGroup } from "@/lib/errors"
 import type { User, Forum } from "@/types"
 
 /**
@@ -19,7 +19,7 @@ export function useUser(userId: string): User {
   const users = useUsers()
   const user = users.find((u) => u.id === userId)
   if (!user) {
-    throw new NotFoundError("User not found")
+    throw new AppError(ErrorGroup.NOT_FOUND, "User not found")
   }
   return user
 }
@@ -40,7 +40,7 @@ export function useForum(slug: string): Forum {
   const forums = useForums()
   const forum = forums.find((f) => f.slug === slug)
   if (!forum) {
-    throw new NotFoundError("Forum not found")
+    throw new AppError(ErrorGroup.NOT_FOUND, "Forum not found")
   }
   return forum
 }

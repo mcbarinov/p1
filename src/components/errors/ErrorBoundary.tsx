@@ -1,5 +1,5 @@
 import { Component, type ReactNode } from "react"
-import { Button } from "@/components/ui/button"
+import { ErrorDisplay } from "./ErrorDisplay"
 
 interface Props {
   children: ReactNode
@@ -45,17 +45,7 @@ export class ErrorBoundary extends Component<Props, State> {
         return this.props.fallback(this.state.error, this.reset)
       }
 
-      return (
-        <div className="container mx-auto p-6">
-          <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-            <h2 className="text-2xl font-semibold">Something went wrong</h2>
-            <p className="text-muted-foreground text-center max-w-md">
-              {this.state.error.message || "An unexpected error occurred"}
-            </p>
-            <Button onClick={this.reset}>Try again</Button>
-          </div>
-        </div>
-      )
+      return <ErrorDisplay error={this.state.error} />
     }
 
     return this.props.children

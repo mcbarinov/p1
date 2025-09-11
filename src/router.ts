@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router"
 import ForumListPage from "./components/pages/ForumListPage"
 import LoginPage from "./components/pages/LoginPage"
-import Layout from "./components/layout/Layout"
+import Layout from "./components/layouts/Layout"
 import PostListPage from "./components/pages/post-list/PostListPage"
 import ForumCreatePage from "./components/pages/ForumCreatePage"
 import PostCreatePage from "./components/pages/PostCreatePage"

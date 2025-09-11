@@ -4,7 +4,7 @@ import Footer from "./-components/Footer"
 import Header from "./-components/Header"
 import { useQuery } from "@tanstack/react-query"
 import { api } from "@/lib/api"
-import { ErrorBoundary } from "@/components/ErrorBoundary"
+import { ErrorBoundary } from "@/components/errors/ErrorBoundary"
 
 export default function Layout() {
   const location = useLocation()
