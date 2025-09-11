@@ -2,7 +2,7 @@ import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query
 import ky from "ky"
 import { useNavigate } from "react-router"
 import { toast } from "sonner"
-import type { Forum, Post, User, LoginRequest, LoginResponse, CreateForumData, Comment } from "@/types"
+import type { Forum, Post, User, LoginRequest, LoginResponse, CreateForumData, Comment, PaginatedResponse } from "@/types"
 import { authStorage } from "./auth-storage"
 
 const httpClient = ky.create({
@@ -50,10 +50,15 @@ export const api = {
         gcTime: Infinity,
       }),
 
-    posts: (slug: string) =>
+    posts: (slug: string, page = 1, pageSize = 10) =>
       queryOptions({
-        queryKey: ["posts", slug],
-        queryFn: () => httpClient.get(`api/forums/${slug}/posts`).json<Post[]>(),
+        queryKey: ["posts", slug, page, pageSize],
+        queryFn: () =>
+          httpClient
+            .get(`api/forums/${slug}/posts`, {
+              searchParams: { page, pageSize },
+            })
+            .json<PaginatedResponse<Post>>(),
         staleTime: 1 * 60 * 1000,
         gcTime: 5 * 60 * 1000,
       }),

@@ -98,7 +98,7 @@ export const handlers = [
     return HttpResponse.json(mockForums)
   }),
 
-  // Get posts by forum slug
+  // Get posts by forum slug with pagination
   http.get("/api/forums/:slug/posts", ({ params, request }) => {
     const user = validateSession(request)
     if (!user) {
@@ -106,16 +106,33 @@ export const handlers = [
     }
 
     const { slug } = params
+    const url = new URL(request.url)
+    const page = Number(url.searchParams.get("page") ?? "1")
+    const pageSize = Number(url.searchParams.get("pageSize") ?? "10")
+
     const forum = mockForums.find((f) => f.slug === slug)
 
     if (!forum) {
       return HttpResponse.json({ error: "Forum not found" }, { status: 404 })
     }
 
-    const forumPosts = mockPosts
+    const allForumPosts = mockPosts
       .filter((post) => post.forumId === forum.id)
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-    return HttpResponse.json(forumPosts)
+
+    const totalCount = allForumPosts.length
+    const totalPages = Math.ceil(totalCount / pageSize)
+    const startIndex = (page - 1) * pageSize
+    const endIndex = startIndex + pageSize
+    const paginatedPosts = allForumPosts.slice(startIndex, endIndex)
+
+    return HttpResponse.json({
+      items: paginatedPosts,
+      totalCount,
+      page,
+      pageSize,
+      totalPages,
+    })
   }),
 
   // Get all users (without passwords)

@@ -1,4 +1,4 @@
-import { useParams, Link, useNavigate } from "react-router"
+import { useParams, Link, useNavigate, useSearchParams } from "react-router"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { api } from "@/lib/api"
 import { useForum } from "@/hooks/useCache"
@@ -6,16 +6,30 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button"
 import { Username } from "@/components/shared/Username"
 import { formatDate } from "@/lib/formatters"
+import { Paginator } from "./-components/Paginator"
 
 export default function ListPosts() {
   const { slug } = useParams() as { slug: string }
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const currentPage = Number(searchParams.get("page") ?? "1")
+  const pageSize = Number(searchParams.get("pageSize") ?? "10")
 
   // Get forum from cached forums list - no API call needed
   const forum = useForum(slug)
 
-  // Only posts need to be fetched per forum
-  const { data: posts } = useSuspenseQuery(api.queries.posts(slug))
+  // Fetch paginated posts
+  const { data: paginatedData } = useSuspenseQuery(api.queries.posts(slug, currentPage, pageSize))
+  const { items: posts, totalPages } = paginatedData
+
+  const handlePageChange = (page: number) => {
+    setSearchParams({ page: String(page), pageSize: String(pageSize) })
+  }
+
+  const handlePageSizeChange = (newPageSize: string) => {
+    setSearchParams({ page: "1", pageSize: newPageSize })
+  }
 
   return (
     <div className="container mx-auto p-6">
@@ -53,6 +67,15 @@ export default function ListPosts() {
           ))}
         </TableBody>
       </Table>
+
+      <Paginator
+        currentPage={currentPage}
+        totalPages={totalPages}
+        pageSize={pageSize}
+        totalCount={paginatedData.totalCount}
+        onPageChange={handlePageChange}
+        onPageSizeChange={handlePageSizeChange}
+      />
     </div>
   )
 }
