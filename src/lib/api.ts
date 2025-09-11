@@ -1,8 +1,6 @@
 import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query"
 import ky from "ky"
 import { AppError } from "./errors"
-import { useNavigate } from "react-router"
-import { toast } from "sonner"
 import type { Forum, Post, User, LoginRequest, LoginResponse, CreateForumData, Comment, PaginatedResponse } from "@/types"
 import { authStorage } from "./auth-storage"
 
@@ -111,26 +109,18 @@ export const api = {
   mutations: {
     useLogin: () => {
       const queryClient = useQueryClient()
-      const navigate = useNavigate()
 
       return useMutation({
         mutationFn: (credentials: LoginRequest) => httpClient.post("api/auth/login", { json: credentials }).json<LoginResponse>(),
         onSuccess: (response) => {
           authStorage.setAuthData(response.user, response.authToken)
           queryClient.setQueryData(["currentUser"], response.user)
-          toast.success("Logged in successfully")
-          void navigate("/")
-        },
-        onError: (error) => {
-          const app = AppError.fromUnknown(error)
-          toast.error(app.message)
         },
       })
     },
 
     useLogout: () => {
       const queryClient = useQueryClient()
-      const navigate = useNavigate()
 
       return useMutation({
         mutationFn: () => httpClient.post("api/auth/logout"),
@@ -138,11 +128,6 @@ export const api = {
           authStorage.clearAuthData()
           queryClient.setQueryData(["currentUser"], null)
           queryClient.clear()
-          void navigate("/login")
-        },
-        onError: (error) => {
-          const app = AppError.fromUnknown(error)
-          toast.error(app.message)
         },
       })
     },
@@ -152,13 +137,8 @@ export const api = {
 
       return useMutation({
         mutationFn: (data: CreateForumData) => httpClient.post("api/forums", { json: data }).json<Forum>(),
-        onSuccess: (newForum: Forum) => {
+        onSuccess: () => {
           void queryClient.invalidateQueries({ queryKey: ["forums"] })
-          toast.success(`Forum "${newForum.title}" created successfully!`)
-        },
-        onError: (error) => {
-          const app = AppError.fromUnknown(error)
-          toast.error(app.message)
         },
       })
     },
@@ -171,11 +151,6 @@ export const api = {
           httpClient.post(`api/forums/${forumSlug}/posts`, { json: data }).json<Post>(),
         onSuccess: (_newPost, variables) => {
           void queryClient.invalidateQueries({ queryKey: ["posts", variables.forumSlug] })
-          toast.success("Post created successfully!")
-        },
-        onError: (error) => {
-          const app = AppError.fromUnknown(error)
-          toast.error(app.message)
         },
       })
     },
@@ -188,11 +163,6 @@ export const api = {
           httpClient.post(`api/forums/${slug}/posts/${postNumber}/comments`, { json: { content } }).json<Comment>(),
         onSuccess: (_newComment, variables) => {
           void queryClient.invalidateQueries({ queryKey: ["comments", variables.slug, variables.postNumber] })
-          toast.success("Comment added successfully!")
-        },
-        onError: (error) => {
-          const app = AppError.fromUnknown(error)
-          toast.error(app.message)
         },
       })
     },

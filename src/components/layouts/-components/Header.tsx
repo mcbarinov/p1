@@ -14,6 +14,15 @@ export default function Header() {
   const { data: currentUser } = useQuery(api.queries.currentUser())
   const logoutMutation = api.mutations.useLogout()
   const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        void navigate("/login")
+      },
+    })
+  }
+
   return (
     <header className="py-4 border-b flex items-center justify-between">
       <Link to="/" className="text-2xl font-bold hover:no-underline">
@@ -33,13 +42,7 @@ export default function Header() {
             Create Forum
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => {
-              logoutMutation.mutate()
-            }}
-          >
-            Logout
-          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { toast } from "sonner"
+import { AppError } from "@/lib/errors"
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -31,22 +33,25 @@ export default function PostCreatePage() {
     },
   })
 
-  const onSubmit = async (data: NewPostForm) => {
+  const onSubmit = (data: NewPostForm) => {
     const tags = data.tags
       .split(",")
       .map((tag) => tag.trim())
       .filter(Boolean)
 
-    try {
-      const newPost = await createPostMutation.mutateAsync({
+    createPostMutation.mutate(
+      {
         ...data,
         tags,
         forumSlug: slug,
-      })
-      void navigate(`/forums/${slug}/${String(newPost.number)}`)
-    } catch {
-      form.setError("root", { message: "Failed to create post" })
-    }
+      },
+      {
+        onSuccess: (newPost) => {
+          toast.success("Post created successfully!")
+          void navigate(`/forums/${slug}/${String(newPost.number)}`)
+        },
+      }
+    )
   }
 
   return (
@@ -100,7 +105,9 @@ export default function PostCreatePage() {
                 )}
               />
 
-              {form.formState.errors.root && <p className="text-sm text-red-500">{form.formState.errors.root.message}</p>}
+              {createPostMutation.error && (
+                <p className="text-sm text-red-500">{AppError.fromUnknown(createPostMutation.error).message}</p>
+              )}
 
               <div className="flex gap-4">
                 <Button type="submit" disabled={createPostMutation.isPending}>

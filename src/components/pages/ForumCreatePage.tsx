@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { toast } from "sonner"
+import { AppError } from "@/lib/errors"
 
 const formSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters").max(100),
@@ -36,18 +38,13 @@ export default function NewForum() {
     },
   })
 
-  const onSubmit = async (data: NewForumForm) => {
-    try {
-      await createForumMutation.mutateAsync(data)
-      void navigate("/")
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to create forum. Please try again."
-      form.setError("root", { message })
-      // Also set specific field error if it's a slug conflict
-      if (message.includes("slug")) {
-        form.setError("slug", { message })
-      }
-    }
+  const onSubmit = (data: NewForumForm) => {
+    createForumMutation.mutate(data, {
+      onSuccess: (newForum) => {
+        toast.success(`Forum "${newForum.title}" created successfully!`)
+        void navigate("/")
+      },
+    })
   }
 
   return (
@@ -122,7 +119,9 @@ export default function NewForum() {
                 )}
               />
 
-              {form.formState.errors.root && <p className="text-sm text-red-500">{form.formState.errors.root.message}</p>}
+              {createForumMutation.error && (
+                <p className="text-sm text-red-500">{AppError.fromUnknown(createForumMutation.error).message}</p>
+              )}
 
               <div className="flex gap-4">
                 <Button type="submit" disabled={createForumMutation.isPending}>

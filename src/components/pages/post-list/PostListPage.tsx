@@ -38,6 +38,7 @@ export default function PostListPage() {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-16">#</TableHead>
             <TableHead className="w-32">Date</TableHead>
             <TableHead className="w-40">Author</TableHead>
             <TableHead>Title</TableHead>
@@ -46,7 +47,7 @@ export default function PostListPage() {
         <TableBody>
           {posts.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
+              <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
                 No posts yet. Be the first to create one!
               </TableCell>
             </TableRow>
@@ -57,6 +58,7 @@ export default function PostListPage() {
                 className="cursor-pointer hover:bg-muted/50"
                 onClick={() => navigate(`/forums/${slug}/${String(post.number)}`)}
               >
+                <TableCell className="font-medium">{post.number}</TableCell>
                 <TableCell>{formatDate(post.createdAt)}</TableCell>
                 <TableCell>
                   <Username id={post.authorId} />

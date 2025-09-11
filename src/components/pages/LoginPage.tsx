@@ -1,14 +1,15 @@
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { Navigate } from "react-router"
+import { Navigate, useNavigate } from "react-router"
 import { useQuery } from "@tanstack/react-query"
 import { api } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { HTTPError } from "ky"
+import { toast } from "sonner"
+import { AppError } from "@/lib/errors"
 
 const formSchema = z.object({
   username: z.string().min(2).max(100),
@@ -19,6 +20,7 @@ type LoginForm = z.infer<typeof formSchema>
 
 export default function Login() {
   const { data: currentUser } = useQuery(api.queries.currentUser())
+  const navigate = useNavigate()
   const loginMutation = api.mutations.useLogin()
 
   const form = useForm<LoginForm>({ resolver: zodResolver(formSchema), defaultValues: { username: "", password: "" } })
@@ -28,8 +30,12 @@ export default function Login() {
   }
 
   const onSubmit = (data: LoginForm) => {
-    console.log("Submitting", data)
-    loginMutation.mutate(data)
+    loginMutation.mutate(data, {
+      onSuccess: () => {
+        toast.success("Logged in successfully")
+        void navigate("/")
+      },
+    })
   }
 
   return (
@@ -67,11 +73,11 @@ export default function Login() {
                 )}
               />
 
-              {loginMutation.isError && (
+              {loginMutation.error && (
                 <p className="text-sm text-red-500">
-                  {loginMutation.error instanceof HTTPError && loginMutation.error.response.status === 401
+                  {AppError.fromUnknown(loginMutation.error).code === "unauthorized"
                     ? "Invalid username or password"
-                    : "An error occurred. Please try again"}
+                    : AppError.fromUnknown(loginMutation.error).message}
                 </p>
               )}
               <Button type="submit" disabled={loginMutation.isPending}>
