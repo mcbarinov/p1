@@ -3,12 +3,7 @@ import { api } from "@/lib/api"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CommentItem } from "./CommentItem"
 
-interface CommentListProps {
-  slug: string
-  postNumber: string
-}
-
-export function CommentList({ slug, postNumber }: CommentListProps) {
+export function CommentList({ slug, postNumber }: { slug: string; postNumber: string }) {
   const { data: comments } = useSuspenseQuery(api.queries.comments(slug, postNumber))
 
   if (comments.length === 0) {

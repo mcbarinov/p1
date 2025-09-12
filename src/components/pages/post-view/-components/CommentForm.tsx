@@ -16,12 +16,7 @@ const formSchema = z.object({
 
 type CommentFormData = z.infer<typeof formSchema>
 
-interface CommentFormProps {
-  slug: string
-  postNumber: string
-}
-
-export function CommentForm({ slug, postNumber }: CommentFormProps) {
+export function CommentForm({ slug, postNumber }: { slug: string; postNumber: string }) {
   const createCommentMutation = api.mutations.useCreateComment()
 
   const form = useForm<CommentFormData>({

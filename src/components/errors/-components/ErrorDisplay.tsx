@@ -1,11 +1,7 @@
 import { AlertCircle, AlertTriangle, WifiOff, XCircle } from "lucide-react"
 import { AppError } from "@/lib/errors"
 
-interface ErrorDisplayProps {
-  error: unknown
-}
-
-export function ErrorDisplay({ error }: ErrorDisplayProps) {
+export function ErrorDisplay({ error }: { error: unknown }) {
   const appError = AppError.fromUnknown(error)
   const title = appError.title
 

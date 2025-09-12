@@ -1,11 +1,6 @@
 import { useUser } from "@/hooks/useCache"
 
-interface UsernameProps {
-  id: string
-  className?: string
-}
-
-export function Username({ id, className }: UsernameProps) {
+export function Username({ id, className }: { id: string; className?: string }) {
   const user = useUser(id)
   return <span className={className}>{user.username}</span>
 }

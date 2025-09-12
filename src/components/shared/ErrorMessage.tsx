@@ -1,11 +1,7 @@
 import { AlertCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
-interface ErrorMessageProps {
-  error: unknown
-}
-
-export function ErrorMessage({ error }: ErrorMessageProps) {
+export function ErrorMessage({ error }: { error: unknown }) {
   if (!error) return null
 
   let message = "Error!"

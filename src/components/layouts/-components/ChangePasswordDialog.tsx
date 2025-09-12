@@ -22,12 +22,7 @@ const formSchema = z
 
 type PasswordChangeForm = z.infer<typeof formSchema>
 
-interface ChangePasswordDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
-
-export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialogProps) {
+export function ChangePasswordDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const changePasswordMutation = api.mutations.useChangePassword()
 
   const form = useForm<PasswordChangeForm>({

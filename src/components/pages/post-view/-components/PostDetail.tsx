@@ -4,11 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Username } from "@/components/shared/Username"
 import { formatDateTime } from "@/lib/formatters"
 
-interface PostDetailProps {
-  post: Post
-}
-
-export function PostDetail({ post }: PostDetailProps) {
+export function PostDetail({ post }: { post: Post }) {
   return (
     <Card>
       <CardHeader>

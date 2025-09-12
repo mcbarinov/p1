@@ -478,6 +478,39 @@ pnpm agent-dev
 5. **Minimize Comments** - Code should be self-documenting
 6. **Test Cache Behavior** - Verify invalidation logic
 
+### Component Props Guidelines
+
+#### When to Use Inline Types vs Interfaces
+
+**Use inline types** for simple props:
+
+```typescript
+// ✅ Good - Simple props with 1-3 properties
+export function ErrorMessage({ error }: { error: unknown }) {}
+export function Username({ id, className }: { id: string; className?: string }) {}
+export function PostDetail({ post }: { post: Post }) {}
+```
+
+**Use interfaces** for complex props:
+
+```typescript
+// ✅ Good - Complex props with 4+ properties or documentation needs
+interface PaginatorProps {
+  currentPage: number
+  totalPages: number
+  pageSize: number
+  totalCount: number
+}
+export function Paginator(props: PaginatorProps) {}
+```
+
+**Guidelines:**
+
+- Inline types for 1-3 simple properties
+- Interfaces for 4+ properties or when JSDoc comments are needed
+- Never export prop interfaces unless they're reused elsewhere
+- Keep prop definitions close to the component for better readability
+
 ### Common Patterns
 
 #### Creating a New Page
