@@ -60,7 +60,6 @@ export const handlers = [
     }
 
     const response: LoginResponse = {
-      user: userWithoutPassword,
       authToken: sessionId,
     }
 
@@ -262,6 +261,16 @@ export const handlers = [
       .filter((comment) => comment.postId === post.id)
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     return HttpResponse.json(postComments)
+  }),
+
+  // Get current user
+  http.get("/api/users/me", ({ request }) => {
+    const user = validateSession(request)
+    if (!user) {
+      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    return HttpResponse.json(user)
   }),
 
   // Create new comment

@@ -45,7 +45,6 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   authToken: string
-  user: User
 }
 export interface CreateForumData {
   title: string

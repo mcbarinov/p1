@@ -53,14 +53,16 @@ async function startApp() {
   })
 
   // Initialize auth from localStorage
-  const currentUser = authStorage.getCurrentUser()
-  if (currentUser) {
-    queryClient.setQueryData(["currentUser"], currentUser)
-
+  const authToken = authStorage.getAuthToken()
+  if (authToken) {
     // Prefetch critical data only if authenticated
-    // This ensures users and forums are loaded once at app start
+    // This ensures users, forums, and current user are loaded once at app start
     try {
-      await Promise.all([queryClient.prefetchQuery(api.queries.forums()), queryClient.prefetchQuery(api.queries.users())])
+      await Promise.all([
+        queryClient.prefetchQuery(api.queries.currentUser()),
+        queryClient.prefetchQuery(api.queries.forums()),
+        queryClient.prefetchQuery(api.queries.users()),
+      ])
     } catch (error) {
       // If prefetch fails (likely 401), the afterResponse hook will handle redirect
       console.error("Failed to prefetch data:", error)

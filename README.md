@@ -251,9 +251,9 @@ mutation.mutate(data, {
 Custom error messages for specific error codes:
 
 ```typescript
-<ErrorMessage 
+<ErrorMessage
   error={mutation.error}
-  customMessage={(error) => 
+  customMessage={(error) =>
     error.code === "unauthorized" ? "Invalid credentials" : undefined
   }
 />
@@ -294,7 +294,7 @@ Provide proper feedback during form submission:
 export function CreatePostForm() {
   const navigate = useNavigate()
   const mutation = api.mutations.useCreatePost()
-  
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: { title: "", content: "" },
@@ -325,9 +325,9 @@ export function CreatePostForm() {
             </FormItem>
           )}
         />
-        
+
         {mutation.error && <ErrorMessage error={mutation.error} />}
-        
+
         <Button type="submit" disabled={mutation.isPending}>
           {mutation.isPending ? "Creating..." : "Create"}
         </Button>

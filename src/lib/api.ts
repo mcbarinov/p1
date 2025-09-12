@@ -21,7 +21,7 @@ const httpClient = ky.create({
         if (response.status === 401) {
           const isLoginPage = window.location.pathname === "/login"
           if (!isLoginPage) {
-            authStorage.clearAuthData()
+            authStorage.clearAuthToken()
             window.location.href = "/login"
           }
         }
@@ -55,7 +55,7 @@ export const api = {
     currentUser: () =>
       queryOptions({
         queryKey: ["currentUser"],
-        queryFn: () => authStorage.getCurrentUser(),
+        queryFn: () => httpClient.get("api/users/me").json<User>(),
         staleTime: Infinity,
         gcTime: Infinity,
       }),
@@ -112,9 +112,10 @@ export const api = {
 
       return useMutation({
         mutationFn: (credentials: LoginRequest) => httpClient.post("api/auth/login", { json: credentials }).json<LoginResponse>(),
-        onSuccess: (response) => {
-          authStorage.setAuthData(response.user, response.authToken)
-          queryClient.setQueryData(["currentUser"], response.user)
+        onSuccess: async (response) => {
+          authStorage.setAuthToken(response.authToken)
+          // Fetch the current user after successful login
+          await queryClient.invalidateQueries({ queryKey: ["currentUser"] })
         },
       })
     },
@@ -125,7 +126,7 @@ export const api = {
       return useMutation({
         mutationFn: () => httpClient.post("api/auth/logout"),
         onSuccess: () => {
-          authStorage.clearAuthData()
+          authStorage.clearAuthToken()
           queryClient.setQueryData(["currentUser"], null)
           queryClient.clear()
         },
