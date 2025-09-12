@@ -115,12 +115,7 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
               )}
             />
 
-            {changePasswordMutation.error && (
-              <ErrorMessage
-                error={changePasswordMutation.error}
-                customMessage={(error) => (error.code === "bad_request" ? "Current password is incorrect" : undefined)}
-              />
-            )}
+            {changePasswordMutation.error && <ErrorMessage error={changePasswordMutation.error} />}
 
             <DialogFooter>
               <Button type="submit" disabled={changePasswordMutation.isPending}>

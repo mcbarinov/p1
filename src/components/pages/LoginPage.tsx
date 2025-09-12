@@ -73,12 +73,7 @@ export default function LoginPage() {
                 )}
               />
 
-              {loginMutation.error && (
-                <ErrorMessage
-                  error={loginMutation.error}
-                  customMessage={(error) => (error.code === "unauthorized" ? "Invalid username or password" : undefined)}
-                />
-              )}
+              {loginMutation.error && <ErrorMessage error={loginMutation.error} />}
               <Button type="submit" disabled={loginMutation.isPending}>
                 {loginMutation.isPending ? "Logging in..." : "Login"}
               </Button>
