@@ -537,7 +537,7 @@ echo '@import "tailwindcss";' > src/index.css
 
 # shadcn/ui
 pnpm dlx shadcn@latest init
-pnpm dlx shadcn@latest add dropdown-menu card table form button textarea input select sonner badge pagination alert
+pnpm dlx shadcn@latest add dropdown-menu card table form button textarea input select sonner badge pagination alert dialog
 
 # MSW for mocks
 pnpm add -D msw
