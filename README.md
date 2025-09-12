@@ -516,6 +516,30 @@ pnpm agent-dev
 - **TypeScript strictness** - More verbose but catches errors early
 - **Minimal abstractions** - Direct use of React Query instead of custom wrappers
 
-## License
+## Project Setup from Scratch
 
-MIT
+Complete script to recreate this project from zero:
+
+```bash
+# Create project
+pnpm create vite@latest -t react-ts {new-project-dir}
+cd {new-project-dir}
+
+# Core dependencies
+pnpm add react-router ky @tanstack/react-query
+
+# Dev tools
+pnpm add -D eslint-plugin-react-x eslint-plugin-react-dom prettier eslint-config-prettier @types/node @tanstack/eslint-plugin-query
+
+# Tailwind CSS (not as dev dependency!)
+pnpm add tailwindcss @tailwindcss/vite
+echo '@import "tailwindcss";' > src/index.css
+
+# shadcn/ui
+pnpm dlx shadcn@latest init
+pnpm dlx shadcn@latest add dropdown-menu card table form button textarea input select sonner badge pagination alert
+
+# MSW for mocks
+pnpm add -D msw
+pnpm dlx msw init public --save
+```
