@@ -264,13 +264,39 @@ export const handlers = [
   }),
 
   // Get current user
-  http.get("/api/users/me", ({ request }) => {
+  http.get("/api/profile", ({ request }) => {
     const user = validateSession(request)
     if (!user) {
       return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     return HttpResponse.json(user)
+  }),
+
+  // Change password
+  http.post("/api/profile/change-password", async ({ request }) => {
+    const user = validateSession(request)
+    if (!user) {
+      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const data = (await request.json()) as { currentPassword: string; newPassword: string }
+
+    // Find the user in the mock database
+    const userInDb = mockUsers.find((u) => u.id === user.id)
+    if (!userInDb) {
+      return HttpResponse.json({ error: "User not found" }, { status: 404 })
+    }
+
+    // Check if current password is correct
+    if (userInDb.password !== data.currentPassword) {
+      return HttpResponse.json({ error: "Current password is incorrect" }, { status: 400 })
+    }
+
+    // Update the password
+    userInDb.password = data.newPassword
+
+    return HttpResponse.json({ message: "Password changed successfully" })
   }),
 
   // Create new comment

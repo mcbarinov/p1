@@ -1,3 +1,4 @@
+import { useState } from "react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,13 +8,15 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useQuery } from "@tanstack/react-query"
 import { api } from "@/lib/api"
-import { ChevronDownIcon, UserIcon, PlusCircleIcon } from "lucide-react"
+import { ChevronDownIcon, UserIcon, PlusCircleIcon, LockIcon } from "lucide-react"
 import { Link, useNavigate } from "react-router"
+import { ChangePasswordDialog } from "./ChangePasswordDialog"
 
 export default function Header() {
   const { data: currentUser } = useQuery(api.queries.currentUser())
   const logoutMutation = api.mutations.useLogout()
   const navigate = useNavigate()
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false)
 
   const handleLogout = () => {
     logoutMutation.mutate(undefined, {
@@ -21,6 +24,10 @@ export default function Header() {
         void navigate("/login")
       },
     })
+  }
+
+  const handleChangePassword = () => {
+    setPasswordDialogOpen(true)
   }
 
   return (
@@ -41,10 +48,16 @@ export default function Header() {
             <PlusCircleIcon className="mr-2 h-4 w-4" />
             Create Forum
           </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleChangePassword}>
+            <LockIcon className="mr-2 h-4 w-4" />
+            Change Password
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <ChangePasswordDialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen} />
     </header>
   )
 }

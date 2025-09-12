@@ -5,12 +5,14 @@ import Header from "./-components/Header"
 import { useQuery } from "@tanstack/react-query"
 import { api } from "@/lib/api"
 import { ErrorBoundary } from "@/components/errors/ErrorBoundary"
+import { authStorage } from "@/lib/auth-storage"
 
 export default function Layout() {
   const location = useLocation()
+  const hasToken = authStorage.getAuthToken()
   const { data: currentUser } = useQuery(api.queries.currentUser())
-
-  if (!currentUser) {
+  
+  if (!hasToken || !currentUser) {
     return <Navigate to="/login" replace />
   }
   return (

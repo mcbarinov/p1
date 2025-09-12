@@ -16,7 +16,7 @@ const httpClient = ky.create({
       },
     ],
     afterResponse: [
-      async (_request, _options, response) => {
+      async (request, _options, response) => {
         // Handle 401 redirect early
         if (response.status === 401) {
           const isLoginPage = window.location.pathname === "/login"
@@ -55,7 +55,7 @@ export const api = {
     currentUser: () =>
       queryOptions({
         queryKey: ["currentUser"],
-        queryFn: () => httpClient.get("api/users/me").json<User>(),
+        queryFn: () => httpClient.get("api/profile").json<User>(),
         staleTime: Infinity,
         gcTime: Infinity,
       }),
@@ -165,6 +165,13 @@ export const api = {
         onSuccess: (_newComment, variables) => {
           void queryClient.invalidateQueries({ queryKey: ["comments", variables.slug, variables.postNumber] })
         },
+      })
+    },
+
+    useChangePassword: () => {
+      return useMutation({
+        mutationFn: ({ currentPassword, newPassword }: { currentPassword: string; newPassword: string }) =>
+          httpClient.post("api/profile/change-password", { json: { currentPassword, newPassword } }),
       })
     },
   },
