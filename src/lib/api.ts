@@ -16,7 +16,7 @@ const httpClient = ky.create({
       },
     ],
     afterResponse: [
-      async (request, _options, response) => {
+      async (_request, _options, response) => {
         // Handle 401 redirect early
         if (response.status === 401) {
           const isLoginPage = window.location.pathname === "/login"

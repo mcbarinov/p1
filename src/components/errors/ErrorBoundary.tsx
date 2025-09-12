@@ -1,51 +1,43 @@
 import { Component, type ReactNode } from "react"
-import { ErrorDisplay } from "./-components/ErrorDisplay"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AppError } from "@/lib/errors"
+import { AlertCircleIcon } from "lucide-react"
 
 interface Props {
   children: ReactNode
-  fallback?: (error: Error, reset: () => void) => ReactNode
-  /**
-   * Change this value (e.g. route pathname) to auto-reset the boundary.
-   */
   resetKey?: unknown
 }
 
-interface State {
-  hasError: boolean
-  error: Error | null
-}
+export class ErrorBoundary extends Component<Props, { error: Error | null }> {
+  state: { error: Error | null } = { error: null }
 
-export class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props)
-    this.state = { hasError: false, error: null }
-  }
-
-  static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error }
+  static getDerivedStateFromError(error: Error) {
+    return { error }
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error("Error caught by boundary:", error, errorInfo)
   }
 
-  reset = () => {
-    this.setState({ hasError: false, error: null })
-  }
-
   componentDidUpdate(prevProps: Readonly<Props>) {
-    if (prevProps.resetKey !== this.props.resetKey && this.state.hasError) {
-      this.reset()
+    if (prevProps.resetKey !== this.props.resetKey && this.state.error) {
+      this.setState({ error: null })
     }
   }
 
   render() {
-    if (this.state.hasError && this.state.error) {
-      if (this.props.fallback) {
-        return this.props.fallback(this.state.error, this.reset)
-      }
+    if (this.state.error) {
+      const appError = AppError.fromUnknown(this.state.error)
 
-      return <ErrorDisplay error={this.state.error} />
+      return (
+        <div className="container mx-auto p-6">
+          <Alert variant="destructive" className="max-w-2xl mx-auto">
+            <AlertCircleIcon />
+            <AlertTitle>{appError.title}</AlertTitle>
+            <AlertDescription>{appError.message}</AlertDescription>
+          </Alert>
+        </div>
+      )
     }
 
     return this.props.children
