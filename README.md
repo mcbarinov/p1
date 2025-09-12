@@ -195,6 +195,162 @@ const forum = useForum(slug) // Throws if not found
 const forums = useForums() // Returns all forums
 ```
 
+### Form Handling
+
+#### Technology Stack
+
+- **React Hook Form** - Form state management with minimal re-renders
+- **Zod** - Runtime schema validation with TypeScript integration
+- **shadcn/ui Form components** - Consistent form UI components
+- **TanStack Query mutations** - Server state management for form submissions
+
+#### Form Architecture Patterns
+
+##### 1. Schema Definition
+
+Define validation schemas using Zod with clear, user-friendly error messages:
+
+```typescript
+const formSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  content: z.string().min(10, "Content must be at least 10 characters"),
+  slug: z.string().regex(/^[a-z0-9-]+$/, "Only lowercase letters, numbers, and hyphens"),
+})
+
+type FormData = z.infer<typeof formSchema>
+```
+
+##### 2. Form Setup
+
+Initialize forms with proper validation and default values:
+
+```typescript
+const form = useForm<FormData>({
+  resolver: zodResolver(formSchema),
+  defaultValues: {
+    title: "",
+    content: "",
+  },
+})
+```
+
+##### 3. Error Handling
+
+Display errors directly in the UI - never use `onError` callbacks:
+
+```typescript
+// ✅ CORRECT: Display mutation errors in the form
+{mutation.error && <ErrorMessage error={mutation.error} />}
+
+// ❌ WRONG: Don't handle errors in callbacks
+mutation.mutate(data, {
+  onError: (error) => { /* Don't do this */ }
+})
+```
+
+Custom error messages for specific error codes:
+
+```typescript
+<ErrorMessage 
+  error={mutation.error}
+  customMessage={(error) => 
+    error.code === "unauthorized" ? "Invalid credentials" : undefined
+  }
+/>
+```
+
+##### 4. Mutation Success Handling
+
+Handle side effects in `onSuccess` callback:
+
+```typescript
+const onSubmit = (data: FormData) => {
+  mutation.mutate(data, {
+    onSuccess: (result) => {
+      // Navigate after successful creation
+      navigate(`/posts/${result.id}`)
+      // Or show success toast
+      toast.success("Created successfully!")
+      // Reset form if staying on same page
+      form.reset()
+    },
+  })
+}
+```
+
+##### 5. UI State Management
+
+Provide proper feedback during form submission:
+
+```typescript
+<Button type="submit" disabled={mutation.isPending}>
+  {mutation.isPending ? "Creating..." : "Create"}
+</Button>
+```
+
+##### 6. Complete Form Example
+
+```typescript
+export function CreatePostForm() {
+  const navigate = useNavigate()
+  const mutation = api.mutations.useCreatePost()
+  
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { title: "", content: "" },
+  })
+
+  const onSubmit = (data: FormData) => {
+    mutation.mutate(data, {
+      onSuccess: (post) => {
+        toast.success("Post created!")
+        navigate(`/posts/${post.id}`)
+      },
+    })
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Title</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        {mutation.error && <ErrorMessage error={mutation.error} />}
+        
+        <Button type="submit" disabled={mutation.isPending}>
+          {mutation.isPending ? "Creating..." : "Create"}
+        </Button>
+      </form>
+    </Form>
+  )
+}
+```
+
+#### Form Component Organization
+
+- **Simple forms**: Inline in page components
+- **Complex forms**: Separate components in `-components/` folder
+- **Reusable forms**: Accept minimal props (IDs, not objects)
+
+#### Key Principles
+
+1. **Validation-first**: Define schemas before building forms
+2. **User feedback**: Always show loading and error states
+3. **Type safety**: Use `z.infer` for form types
+4. **Separation of concerns**: Mutations handle cache, components handle UI
+5. **Consistent patterns**: Follow the same structure across all forms
+
 ### Error Handling
 
 #### Centralized Error System
