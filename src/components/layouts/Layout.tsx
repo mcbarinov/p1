@@ -11,7 +11,7 @@ export default function Layout() {
   const location = useLocation()
   const hasToken = authStorage.getAuthToken()
   const { data: currentUser } = useQuery(api.queries.currentUser())
-  
+
   if (!hasToken || !currentUser) {
     return <Navigate to="/login" replace />
   }

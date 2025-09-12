@@ -101,7 +101,7 @@ const httpClient = ky.create({
     }],
     afterResponse: [async (request, options, response) => {
       if (response.status === 401) {
-        authStorage.clearAuthData()
+        authStorage.clearAuthToken()
         window.location.href = "/login"
       }
       if (!response.ok) {
@@ -385,9 +385,11 @@ export function CreatePostForm() {
 #### Auth Flow
 
 1. Login stores token and user data
-2. Token attached to all API requests
-3. 401 response clears auth and redirects
-4. Protected routes check auth state
+2. Layout component acts as auth guard - checks token before rendering protected routes
+3. Token attached to all API requests
+4. 401 response clears auth and redirects (for expired tokens)
+5. User profile accessed via `/api/profile` endpoint
+6. Password change available through `/api/profile/change-password`
 
 ## Key Development Principles
 
