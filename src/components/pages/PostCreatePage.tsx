@@ -43,7 +43,7 @@ export default function PostCreatePage() {
       {
         ...data,
         tags,
-        forumSlug: slug,
+        slug,
       },
       {
         onSuccess: (newPost) => {

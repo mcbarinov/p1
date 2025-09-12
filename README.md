@@ -40,12 +40,14 @@ src/
 │   ├── api.ts                # API client and cache configuration
 │   ├── errors.ts             # Error handling system
 │   ├── auth-storage.ts       # Authentication management
-│   └── formatters.ts         # Data formatting utilities
+│   ├── formatters.ts         # Data formatting utilities
+│   └── utils.ts              # UI utility functions (shadcn/ui)
 ├── hooks/                     # Custom React hooks
 │   └── useCache.ts           # Cache access hooks
 ├── mocks/                     # MSW mock server
-│   ├── handlers.ts
-│   └── browser.ts
+│   ├── data.ts               # Mock data generation
+│   ├── handlers.ts           # API request handlers
+│   └── browser.ts            # Browser service worker setup
 ├── types.ts                   # TypeScript type definitions
 ├── router.ts                  # Route configuration
 └── main.tsx                   # Application entry point
@@ -83,9 +85,11 @@ This file is the heart of all server communication:
 
 **What it DOESN'T do:**
 
-- UI updates or navigation (handled by components)
+- UI updates or navigation (handled by components)\*
 - Business logic (handled by components)
 - Direct error display (components show toasts/errors)
+
+\*Exception: 401 authentication errors trigger automatic redirect to `/login` at the API layer to ensure consistent auth handling across the entire application
 
 ```typescript
 // Example: Complete API configuration with auth, error handling, and caching

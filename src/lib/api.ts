@@ -147,10 +147,10 @@ export const api = {
       const queryClient = useQueryClient()
 
       return useMutation({
-        mutationFn: ({ forumSlug, ...data }: { title: string; content: string; tags: string[]; forumSlug: string }) =>
-          httpClient.post(`api/forums/${forumSlug}/posts`, { json: data }).json<Post>(),
+        mutationFn: ({ slug, ...data }: { title: string; content: string; tags: string[]; slug: string }) =>
+          httpClient.post(`api/forums/${slug}/posts`, { json: data }).json<Post>(),
         onSuccess: (_newPost, variables) => {
-          void queryClient.invalidateQueries({ queryKey: ["posts", variables.forumSlug] })
+          void queryClient.invalidateQueries({ queryKey: ["posts", variables.slug] })
         },
       })
     },

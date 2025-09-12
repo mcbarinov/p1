@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { api } from "@/lib/api"
 
-export default function Home() {
+export default function ForumListPage() {
   const { data: forums } = useSuspenseQuery(api.queries.forums())
 
   const groupedForums = forums.reduce<Record<string, Forum[]>>((acc, forum) => {
