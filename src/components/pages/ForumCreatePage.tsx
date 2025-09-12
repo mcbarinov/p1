@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
-import { AppError } from "@/lib/errors"
+import { ErrorMessage } from "@/components/shared/ErrorMessage"
 
 const formSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters").max(100),
@@ -122,9 +122,7 @@ export default function ForumCreatePage() {
                 )}
               />
 
-              {createForumMutation.error && (
-                <p className="text-sm text-red-500">{AppError.fromUnknown(createForumMutation.error).message}</p>
-              )}
+              {createForumMutation.error && <ErrorMessage error={createForumMutation.error} />}
 
               <div className="flex gap-4">
                 <Button type="submit" disabled={createForumMutation.isPending}>

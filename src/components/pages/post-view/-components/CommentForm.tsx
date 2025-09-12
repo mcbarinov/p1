@@ -8,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { Textarea } from "@/components/ui/textarea"
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
-import { AppError } from "@/lib/errors"
+import { ErrorMessage } from "@/components/shared/ErrorMessage"
 
 const formSchema = z.object({
   content: z.string().min(1, "Comment is required").max(5000, "Comment is too long"),
@@ -72,9 +72,7 @@ export function CommentForm({ slug, postNumber }: CommentFormProps) {
                 </FormItem>
               )}
             />
-            {createCommentMutation.error && (
-              <p className="text-sm text-destructive">{AppError.fromUnknown(createCommentMutation.error).message}</p>
-            )}
+            {createCommentMutation.error && <ErrorMessage error={createCommentMutation.error} />}
             <Button type="submit" disabled={createCommentMutation.isPending || !form.watch("content").trim()}>
               {createCommentMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Post Comment

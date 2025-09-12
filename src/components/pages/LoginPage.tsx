@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
-import { AppError } from "@/lib/errors"
+import { ErrorMessage } from "@/components/shared/ErrorMessage"
 
 const formSchema = z.object({
   username: z.string().min(2).max(100),
@@ -74,11 +74,10 @@ export default function LoginPage() {
               />
 
               {loginMutation.error && (
-                <p className="text-sm text-red-500">
-                  {AppError.fromUnknown(loginMutation.error).code === "unauthorized"
-                    ? "Invalid username or password"
-                    : AppError.fromUnknown(loginMutation.error).message}
-                </p>
+                <ErrorMessage
+                  error={loginMutation.error}
+                  customMessage={(error) => (error.code === "unauthorized" ? "Invalid username or password" : undefined)}
+                />
               )}
               <Button type="submit" disabled={loginMutation.isPending}>
                 {loginMutation.isPending ? "Logging in..." : "Login"}

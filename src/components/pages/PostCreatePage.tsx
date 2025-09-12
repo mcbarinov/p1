@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
-import { AppError } from "@/lib/errors"
+import { ErrorMessage } from "@/components/shared/ErrorMessage"
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -105,9 +105,7 @@ export default function PostCreatePage() {
                 )}
               />
 
-              {createPostMutation.error && (
-                <p className="text-sm text-red-500">{AppError.fromUnknown(createPostMutation.error).message}</p>
-              )}
+              {createPostMutation.error && <ErrorMessage error={createPostMutation.error} />}
 
               <div className="flex gap-4">
                 <Button type="submit" disabled={createPostMutation.isPending}>
