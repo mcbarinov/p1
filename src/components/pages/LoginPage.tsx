@@ -44,7 +44,7 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={(e) => void form.handleSubmit(onSubmit)(e)} className="flex flex-col gap-4 w-64">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 w-64">
               <FormField
                 control={form.control}
                 name="username"
