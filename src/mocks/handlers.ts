@@ -40,7 +40,7 @@ export const handlers = [
     const user = mockUsers.find((u) => u.username === credentials.username && u.password === credentials.password)
 
     if (!user) {
-      return HttpResponse.json({ error: "Invalid username or password" }, { status: 401 })
+      return HttpResponse.json({ message: "Invalid username or password" }, { status: 401 })
     }
 
     // Generate session
@@ -70,7 +70,7 @@ export const handlers = [
   http.post("/api/auth/logout", ({ request }) => {
     const user = validateSession(request)
     if (!user) {
-      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return HttpResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
     // Invalidate session from memory and localStorage
@@ -91,7 +91,7 @@ export const handlers = [
   http.get("/api/forums", ({ request }) => {
     const user = validateSession(request)
     if (!user) {
-      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return HttpResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
     return HttpResponse.json(mockForums)
@@ -101,7 +101,7 @@ export const handlers = [
   http.get("/api/forums/:slug/posts", ({ params, request }) => {
     const user = validateSession(request)
     if (!user) {
-      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return HttpResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
     const { slug } = params
@@ -112,7 +112,7 @@ export const handlers = [
     const forum = mockForums.find((f) => f.slug === slug)
 
     if (!forum) {
-      return HttpResponse.json({ error: "Forum not found" }, { status: 404 })
+      return HttpResponse.json({ message: "Forum not found" }, { status: 404 })
     }
 
     const allForumPosts = mockPosts
@@ -138,7 +138,7 @@ export const handlers = [
   http.get("/api/users", ({ request }) => {
     const user = validateSession(request)
     if (!user) {
-      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return HttpResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
     const usersWithoutPasswords = mockUsers.map(({ id, username, role }) => ({
@@ -153,7 +153,7 @@ export const handlers = [
   http.post("/api/forums", async ({ request }) => {
     const user = validateSession(request)
     if (!user) {
-      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return HttpResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
     const data = (await request.json()) as Omit<Forum, "id">
@@ -161,7 +161,7 @@ export const handlers = [
     // Check if slug already exists
     const existingForum = mockForums.find((f) => f.slug === data.slug)
     if (existingForum) {
-      return HttpResponse.json({ error: "A forum with this slug already exists" }, { status: 400 })
+      return HttpResponse.json({ message: "A forum with this slug already exists" }, { status: 400 })
     }
 
     // Generate a unique ID
@@ -180,20 +180,20 @@ export const handlers = [
   http.get("/api/forums/:slug/posts/:postNumber", ({ params, request }) => {
     const user = validateSession(request)
     if (!user) {
-      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return HttpResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
     const { slug, postNumber } = params
     const forum = mockForums.find((f) => f.slug === slug)
 
     if (!forum) {
-      return HttpResponse.json({ error: "Forum not found" }, { status: 404 })
+      return HttpResponse.json({ message: "Forum not found" }, { status: 404 })
     }
 
     const post = mockPosts.find((p) => p.number === Number(postNumber) && p.forumId === forum.id)
 
     if (!post) {
-      return HttpResponse.json({ error: "Post not found" }, { status: 404 })
+      return HttpResponse.json({ message: "Post not found" }, { status: 404 })
     }
 
     return HttpResponse.json(post)
@@ -203,14 +203,14 @@ export const handlers = [
   http.post("/api/forums/:slug/posts", async ({ request, params }) => {
     const user = validateSession(request)
     if (!user) {
-      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return HttpResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
     const { slug } = params
     const forum = mockForums.find((f) => f.slug === slug)
 
     if (!forum) {
-      return HttpResponse.json({ error: "Forum not found" }, { status: 404 })
+      return HttpResponse.json({ message: "Forum not found" }, { status: 404 })
     }
 
     const data = (await request.json()) as { title: string; content: string; tags: string[] }
@@ -241,20 +241,20 @@ export const handlers = [
   http.get("/api/forums/:slug/posts/:postNumber/comments", ({ params, request }) => {
     const user = validateSession(request)
     if (!user) {
-      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return HttpResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
     const { slug, postNumber } = params
     const forum = mockForums.find((f) => f.slug === slug)
 
     if (!forum) {
-      return HttpResponse.json({ error: "Forum not found" }, { status: 404 })
+      return HttpResponse.json({ message: "Forum not found" }, { status: 404 })
     }
 
     const post = mockPosts.find((p) => p.number === Number(postNumber) && p.forumId === forum.id)
 
     if (!post) {
-      return HttpResponse.json({ error: "Post not found" }, { status: 404 })
+      return HttpResponse.json({ message: "Post not found" }, { status: 404 })
     }
 
     const postComments = mockComments
@@ -267,7 +267,7 @@ export const handlers = [
   http.get("/api/profile", ({ request }) => {
     const user = validateSession(request)
     if (!user) {
-      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return HttpResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
     return HttpResponse.json(user)
@@ -277,7 +277,7 @@ export const handlers = [
   http.post("/api/profile/change-password", async ({ request }) => {
     const user = validateSession(request)
     if (!user) {
-      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return HttpResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
     const data = (await request.json()) as { currentPassword: string; newPassword: string }
@@ -285,12 +285,12 @@ export const handlers = [
     // Find the user in the mock database
     const userInDb = mockUsers.find((u) => u.id === user.id)
     if (!userInDb) {
-      return HttpResponse.json({ error: "User not found" }, { status: 404 })
+      return HttpResponse.json({ message: "User not found" }, { status: 404 })
     }
 
     // Check if current password is correct
     if (userInDb.password !== data.currentPassword) {
-      return HttpResponse.json({ error: "Current password is incorrect" }, { status: 400 })
+      return HttpResponse.json({ message: "Current password is incorrect" }, { status: 400 })
     }
 
     // Update the password
@@ -303,20 +303,20 @@ export const handlers = [
   http.post("/api/forums/:slug/posts/:postNumber/comments", async ({ request, params }) => {
     const user = validateSession(request)
     if (!user) {
-      return HttpResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return HttpResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
     const { slug, postNumber } = params
     const forum = mockForums.find((f) => f.slug === slug)
 
     if (!forum) {
-      return HttpResponse.json({ error: "Forum not found" }, { status: 404 })
+      return HttpResponse.json({ message: "Forum not found" }, { status: 404 })
     }
 
     const post = mockPosts.find((p) => p.number === Number(postNumber) && p.forumId === forum.id)
 
     if (!post) {
-      return HttpResponse.json({ error: "Post not found" }, { status: 404 })
+      return HttpResponse.json({ message: "Post not found" }, { status: 404 })
     }
 
     const data = (await request.json()) as { content: string }
