@@ -6,6 +6,9 @@ import { authStorage } from "@/lib/auth-storage"
 
 const httpClient = ky.create({
   prefixUrl: "/",
+  retry: {
+    statusCodes: [408, 413, 429, 500, 502, 503, 504],
+  },
   hooks: {
     beforeRequest: [
       (request) => {
@@ -19,9 +22,8 @@ const httpClient = ky.create({
       async (_request, _options, response) => {
         // Handle 401 redirect early
         if (response.status === 401) {
-          const isLoginPage = window.location.pathname === "/login"
-          if (!isLoginPage) {
-            authStorage.clearAuthToken()
+          authStorage.clearAuthToken()
+          if (window.location.pathname !== "/login") {
             window.location.href = "/login"
           }
         }
@@ -114,8 +116,8 @@ export const api = {
         mutationFn: (credentials: LoginRequest) => httpClient.post("api/auth/login", { json: credentials }).json<LoginResponse>(),
         onSuccess: async (response) => {
           authStorage.setAuthToken(response.authToken)
-          // Fetch the current user after successful login
-          await queryClient.invalidateQueries({ queryKey: ["currentUser"] })
+          // Invalidate and refetch all queries after login
+          await queryClient.invalidateQueries()
         },
       })
     },

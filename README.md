@@ -65,7 +65,8 @@ This file is the heart of all server communication:
 
 - Configures `ky` HTTP client with base URL and interceptors
 - Automatically attaches auth tokens to all requests
-- Handles 401 errors with redirect to login
+- Handles 401 errors with redirect to login (only when not on login page)
+- Excludes 401 from retry attempts to prevent multiple failed auth requests
 - Transforms HTTP errors into standardized `AppError` instances
 
 **Query & Mutation Definitions:**
@@ -370,8 +371,9 @@ export function CreatePostForm() {
 
 #### Authentication Errors
 
-- 401 responses trigger automatic redirect to `/login`
-- Auth token cleared from localStorage
+- 401 responses always clear auth token from localStorage
+- Redirect to `/login` only happens when not already on login page
+- No retry attempts for 401 errors (fail immediately)
 - Query cache cleared to prevent stale data
 
 ### Authentication
@@ -384,12 +386,13 @@ export function CreatePostForm() {
 
 #### Auth Flow
 
-1. Login stores token and user data
-2. Layout component acts as auth guard - checks token before rendering protected routes
+1. Login stores token and invalidates all queries to refresh data
+2. Layout component acts as auth guard - checks token and conditionally queries user profile
 3. Token attached to all API requests
-4. 401 response clears auth and redirects (for expired tokens)
-5. User profile accessed via `/api/profile` endpoint
+4. 401 response clears auth token; redirects to `/login` only when not already there
+5. User profile accessed via `/api/profile` endpoint (only queried when auth token exists)
 6. Password change available through `/api/profile/change-password`
+7. Login page allows re-authentication without logout (account switching)
 
 ## Key Development Principles
 
